@@ -14,3 +14,11 @@
     margin-left: 30px;
     margin-top: 16px;
 }
+
+.info_dark {
+  color: #7f9ef3;
+}
+
+.avatar_dark{
+  background-color: '#144848';
+}

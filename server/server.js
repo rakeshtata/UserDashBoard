@@ -2,8 +2,19 @@ const Koa = require('koa');
 const mount = require('koa-mount');
 const graphqlHTTP = require('koa-graphql');
 const schema = require('./schema/schema');
+const session = require('koa-session-redis');
 
 const app = new Koa();
+
+// app.keys = ['myKey1','myKey2','myKey3'];
+// app.use(session({
+//     store: {
+//       host: '127.0.0.1',
+//       port: 6379,
+//       ttl: 3600,
+//     },
+//   },
+// ));
 
 app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*');
@@ -21,9 +32,5 @@ app.use(
     }),
   )
 );
-
-//app.use(cors())
-
-
 
 app.listen(4000);

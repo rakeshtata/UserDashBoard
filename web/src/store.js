@@ -5,6 +5,7 @@ export const greaterThenAgeState = atom(0);
 export const includedGenderState = atom(['Male', 'Female','Unknown']);
 export const selectedUserState = atom("");
 export const activityState = atom([]);
+export const modeState = atom("dark");
 export const filteredDataState = atom((get) =>
   get(dataState).filter(user=>get(includedGenderState).indexOf(user.gender)!==-1)
                           .filter(user=>user.age>get(greaterThenAgeState))

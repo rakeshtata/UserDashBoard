@@ -8,8 +8,8 @@ import View5 from './views/View5';
 import View6 from './views/View6';
 import './dashboard.css';
 import { useAtom } from 'jotai'
-import {  useUpdateAtom } from "jotai/utils";
-import { dataState, selectedUserState } from './store'
+import {  useUpdateAtom, useAtomValue } from "jotai/utils";
+import { dataState, selectedUserState, modeState } from './store'
 import { useUserApi,useActivityApi } from './useDataApi';
 
 const { Sider, Content } = Layout;
@@ -19,6 +19,7 @@ const Dashboard = ({props}) => {
   const dispatchUser = useUpdateAtom(selectedUserState);
   const {mutateUser} = useUserApi();
   const {mutateActivity} = useActivityApi();
+  const mode = useAtomValue(modeState);
 
   useEffect(() => {
         mutateUser()
@@ -31,11 +32,10 @@ const Dashboard = ({props}) => {
     }
   }, [data])
 
-
     return (
         <div>
             <Layout style={{ height: 920 }}>
-                <Sider width={300} style={{backgroundColor:'#eee'}}>
+                <Sider width={300} className='sider_dark'>
                     <Content style={{ height: 200 }}>
                         <View1/>
                     </Content>
@@ -47,14 +47,14 @@ const Dashboard = ({props}) => {
                     </Content>
                 </Sider>
                 <Layout>
-                    <Content style={{ height: 300 }}>
+                    <Content style={{ height: 300}} className='sider_dark'>
                         <View4 />
                     </Content>
-                    <Layout style={{ height: 600 }}>
+                    <Layout style={{ height: 600}} className='sider_dark'>
                         <Content>
                             <View5/>
                         </Content>
-                        <Sider width={300} style={{backgroundColor:'#eee'}}>
+                        <Sider width={300} className='sider_dark'>
                             <View6/>
                         </Sider>
                     </Layout>

@@ -1,14 +1,16 @@
-.bar_dark {
-    fill: #75204f;
+.line {
+  fill: none;
+  stroke-width: 2px;
 }
 
-.bar {
-    fill: #75204f;
+.line_dark {
+    stroke: red;
 }
 
-.bar_light {
-  fill: steelblue;
+.line_light{
+  stroke: steelblue;
 }
+
 
 .axisBlue line{
   stroke: steelblue;

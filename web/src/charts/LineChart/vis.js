@@ -1,11 +1,13 @@
 import * as d3 from 'd3';
 import _ from 'lodash';
+import './style.css';
 
 const draw = (props) => {
     let data = [];
     if (props.data !== null) {
         data = _.cloneDeep(props.data||[]);
     }
+    const mode = props.mode;
     d3.select('.vis-linechart > *').remove();
     let margin = { top: 20, right: 20, bottom: 30, left: 40 }
     const width = props.width - margin.left - margin.right;;
@@ -29,6 +31,7 @@ const draw = (props) => {
         .range([0, width]);
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
+        .attr("class", "axisBlue")
         .call(d3.axisBottom(x));
 
     // Add Y axis
@@ -36,18 +39,20 @@ const draw = (props) => {
         .domain([0, d3.max(data, function (d) { return +d.count; })])
         .range([height, 0]);
     svg.append("g")
+        .attr("class", "axisBlue")
         .call(d3.axisLeft(y));
 
     // Add the line
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("class", () => mode === "dark" ?'line line_dark':'line line_light')
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
             .x(function (d) { return x(d.date) })
             .y(function (d) { return y(d.count) })
         )
+
 }
 
 export default draw;

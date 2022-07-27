@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 
 const draw = (props) => {
     const data = props.data || [];
+    const mode = props.mode;
     const gender = ['Male', 'Female', 'Unknown'];
     let count = new Array(3).fill(0);
     data.forEach(d => {
@@ -30,8 +31,10 @@ const draw = (props) => {
 
     let radius = Math.min(width, height) / 2;
 
-    let color = d3.scaleOrdinal()
-        .range(['steelblue', 'LightBlue', 'LightSteelBlue']);
+    let color = mode==='dark'? d3.scaleOrdinal()
+        .range(['#ab7ae0', '#cda8f0', '#ebd7fa'])
+        : d3.scaleOrdinal()
+            .range(['steelblue', 'LightBlue', 'LightSteelBlue'])
 
     let arc = d3.arc()
         .innerRadius(0)
@@ -69,6 +72,7 @@ const draw = (props) => {
             return d.data.label;
         })
         .style("font-size", 12)
+        .attr("fill","steelblue")
         .attr("y", 10)
         .attr("x", 11);
 }

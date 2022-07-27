@@ -33,16 +33,30 @@ const RootQuery = new GraphQLObjectType({
     activities: {
       type: new GraphQLList(ActivitiesType),
       args: { id: { type: GraphQLString } },
-      resolve(parentValue, args) {
-        return axios.get(`http://localhost:8000/data/${args.id}`)
-          .then(resp => resp.data.activities);
+      resolve(parentValue, args, ctx) {
+        // if(ctx.session && ctx.session.data){
+        //   return ctx.session.data[args.id].activities;
+        // } else {
+        //console.log(ctx.session.data)
+          return axios.get(`http://localhost:8000/data/${args.id}`)
+            .then(resp => resp.data.activities);
+      // }
       }
     },
     users: {
       type: new GraphQLList(UserType),
-      resolve(parentValue, args) {
-        return axios.get(`http://localhost:8000/data/`)
-          .then(resp => resp.data);
+      resolve(parentValue, args,ctx) {
+        // if(ctx.session && ctx.session.data){
+        //   return ctx.session.data;
+        // } else {
+          return axios.get(`http://localhost:8000/data/`)
+            .then(resp =>{
+              //ctx.session = []
+            //  ctx.session.data = resp.data;
+              return resp.data
+            } );
+        //}
+
       }
     }
   }

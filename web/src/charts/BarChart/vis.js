@@ -3,7 +3,9 @@ import './style.css';
 
 const draw = (props) => {
     d3.select('.vis-barchart > *').remove();
-    const data = props.data?[...props.data]:[];;
+    const data = props.data?[...props.data]:[];
+    const mode = props.mode;
+    const selected = props.selected;
     const margin = {top: 20, right: 20, bottom: 30, left: 40};
     const width = props.width - margin.left - margin.right;
     const height = props.height - margin.top - margin.bottom;
@@ -31,7 +33,7 @@ const draw = (props) => {
     svg.selectAll(".bar")
         .data(data)
         .enter().append("rect")
-        .attr("class", "bar")
+        .attr("fill", (d) => mode === 'dark' ? (d.id === selected.id?'#cb2b83':'#75204f') : ( d.id === selected.id?'#65b7f3':'steelblue'))
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d.age); })
@@ -40,10 +42,12 @@ const draw = (props) => {
     // add the x Axis
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
+        .attr("class", "axisBlue")
         .call(d3.axisBottom(x));
 
     // add the y Axis
     svg.append("g")
+        .attr("class", "axisBlue")
         .call(d3.axisLeft(y));
 }
 

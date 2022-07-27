@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Slider, Checkbox, Divider } from 'antd';
+import { Slider, Checkbox, Divider, Switch } from 'antd';
 import './view3.css';
-import {  useUpdateAtom } from "jotai/utils";
-import { greaterThenAgeState, includedGenderState } from './../../store';
+import {  useUpdateAtom, useAtomValue } from "jotai/utils";
+import { greaterThenAgeState, includedGenderState, modeState } from './../../store';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -16,6 +16,9 @@ const View3 = (props) =>  {
   const [checkedList,setCheckedList] = useState(defaultCheckedList);
   const [indeterminate, setIndeterminate] = useState(true);
   const [checkAll, setCheckAll] = useState(false);
+  const [mode_l, setMode_l] = useState("Light")
+  const dispatchMode = useUpdateAtom(modeState);
+  const mode = useAtomValue(modeState);
 
 
     const onChangeCheckbox = chkList => {
@@ -37,10 +40,20 @@ const View3 = (props) =>  {
         dispatchAge(value);
     }
 
+    const onChange = mode => {
+      if(!mode){
+        setMode_l("Dark")
+        dispatchMode("light")
+      } else {
+        setMode_l("Light")
+        dispatchMode("dark")
+      }
+    }
+
 
     return (
-        <div id='view3' className='pane'>
-            <div className='header'>Filter</div>
+        <div id='view3' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
+            <div className={mode === "dark"? 'header header_dark' : 'header header_light'}>Filter</div>
             <h3>Gender</h3>
             <div style={{ width: 275, margin: 5 }}>
                 <Checkbox
@@ -48,11 +61,11 @@ const View3 = (props) =>  {
                     onChange={onCheckAllChange}
                     checked={checkAll}
                 >
-                    Check all
+                    <div style={{color: "steelblue" }}>Check all</div>
                 </Checkbox>
             </div>
             <br />
-            <div style={{ width: 275, margin: 5 }}>
+            <div style={{ width: 275, margin: 5}}>
                 <CheckboxGroup
                     options={plainOptions}
                     value={checkedList}
@@ -62,6 +75,10 @@ const View3 = (props) =>  {
             <Divider />
             <h3>Age</h3>
             <Slider defaultValue={0} onChange={onChangeSilder}/>
+            <Divider />
+            <h3>Switch mode to {mode_l}</h3>
+            <Switch defaultChecked onChange={onChange} />
+
         </div>
     )
 

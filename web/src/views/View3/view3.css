@@ -5,4 +5,9 @@
 
 #view3 > h3 {
     margin-left: 5px;
+    color: #7f9ef3;
+}
+
+.ant-checkbox-group-item {
+  color: #7f9ef3;
 }
