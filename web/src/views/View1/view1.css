@@ -22,3 +22,31 @@
 .avatar_dark{
   background-color: '#144848';
 }
+
+.bottom_button{
+ clear:both;
+ float: right;
+}
+
+.bottom_button_vertical{
+   float: right;
+   diplay: block;
+}
+
+.right_button{
+  margin-right:10px;
+  margin-left:10px;
+}
+
+.txt_field{
+  display:block;
+}
+
+label{
+  display:inline-block;
+  font-size:smaller;
+}
+
+.right-profile-view{
+  margin-bottom:-10px;
+}

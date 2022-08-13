@@ -3,6 +3,7 @@ import { useMutation } from "react-query";
 import { dataState,activityState } from "./store";
 import { GraphQLClient, gql } from "graphql-request";
 
+
 export  function useUserApi(){
   const setData = useUpdateAtom(dataState);
   const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
@@ -29,6 +30,70 @@ export  function useUserApi(){
   );
 
   return {mutateUser: () => mutate()}
+}
+
+export  function useAddUserApi(){
+  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+
+  const { mutate } = useMutation(
+    async (user) => await graphQLClient.request(gql`mutation {
+      addUser(name: "${user.name}",age: ${parseInt(user.age)},gender: "${user.gender}"){
+        name,
+        age,
+        gender
+      }
+    }`),
+    {
+      onSuccess(resp) {
+      },
+      onError(err) {
+      }
+    }
+  );
+
+  return {mutateAdd: (user) => mutate(user)}
+}
+
+export  function useEditUserApi(){
+  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+
+  const { mutate } = useMutation(
+    async (user) => await graphQLClient.request(gql`mutation {
+      editUser(name: "${user.name}",age: ${parseInt(user.age)},gender:"${user.gender}"){
+        name,
+        age,
+        gender
+      }
+    }`),
+    {
+      onSuccess(resp) {
+      },
+      onError(err) {
+      }
+    }
+  );
+
+  return {mutateEdit: (user) => mutate(user)}
+}
+
+export  function useDeleteUserApi(){
+  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+
+  const { mutate } = useMutation(
+    async (userid) => await graphQLClient.request(gql`mutation {
+      deleteUser(id: ${userid}){
+        id
+      }
+    }`),
+    {
+      onSuccess(resp) {
+      },
+      onError(err) {
+      }
+    }
+  );
+
+  return {mutateDelete: (userid) => mutate(userid)}
 }
 
 export  function useActivityApi(){
