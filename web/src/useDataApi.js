@@ -6,7 +6,7 @@ import { GraphQLClient, gql } from "graphql-request";
 
 export  function useUserApi(){
   const setData = useUpdateAtom(dataState);
-  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+  const graphQLClient = new GraphQLClient("http://localhost/graphql")
 
   const query = gql`{
                     users {
@@ -33,7 +33,7 @@ export  function useUserApi(){
 }
 
 export  function useAddUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+  const graphQLClient = new GraphQLClient("http://localhost/graphql")
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
@@ -55,7 +55,7 @@ export  function useAddUserApi(){
 }
 
 export  function useEditUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+  const graphQLClient = new GraphQLClient("http://localhost/graphql")
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
@@ -77,7 +77,7 @@ export  function useEditUserApi(){
 }
 
 export  function useDeleteUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+  const graphQLClient = new GraphQLClient("http://localhost/graphql")
 
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`mutation {
@@ -98,7 +98,7 @@ export  function useDeleteUserApi(){
 
 export  function useActivityApi(){
   const setActivity = useUpdateAtom(activityState);
-  const graphQLClient = new GraphQLClient("http://localhost:4000/graphql")
+  const graphQLClient = new GraphQLClient("http://localhost/graphql")
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`
         {

@@ -1,0 +1,61 @@
+services:
+  jsonServer-app:
+    build: jsonServer/
+    image: dashboard-jsonserver-image
+    extra_hosts:
+      - "dockerhost:172.18.0.1"
+    ports:
+      - "8000:8000"
+
+  web-app:
+    build: web/
+    image: dashboard-web-image
+    ports:
+      - "3000:3000" 
+
+  server-app:
+    build: server/
+    image: dashboard-server-image
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network   
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    links:
+      - redis
+
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/usr/share/nginx/html
+    depends_on:
+      - server-app
+    restart: always
+    networks:
+      - app-network
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - redis:/data    
+    
+
+networks:
+  app-network:
+    driver: bridge    
+volumes:
+  redis:
+    driver: local

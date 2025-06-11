@@ -6,10 +6,10 @@ const session = require('koa-session-redis');
 
 const app = new Koa();
 
-// app.keys = ['myKey1','myKey2','myKey3'];
+app.keys = ['myKey1','myKey2','myKey3'];
 // app.use(session({
 //     store: {
-//       host: '127.0.0.1',
+//       host: 'http://172.18.0.1',
 //       port: 6379,
 //       ttl: 3600,
 //     },
