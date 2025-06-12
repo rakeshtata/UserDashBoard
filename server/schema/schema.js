@@ -34,28 +34,28 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(ActivitiesType),
       args: { id: { type: GraphQLString } },
       resolve(parentValue, args, ctx) {
-        // if(ctx.session && ctx.session.data){
-        //   return ctx.session.data[args.id].activities;
-        // } else {
+        if(ctx.session && ctx.session.data){
+          return ctx.session.data[args.id].activities;
+        } else {
         //console.log(ctx.session.data)
           return axios.get(`http://172.18.0.1:8000/data/${args.id}`,{headers: { connection: "keep-alive" }})
             .then(resp => resp.data.activities);
-      // }
+      }
       }
     },
     users: {
       type: new GraphQLList(UserType),
       resolve(parentValue, args,ctx) {
-        // if(ctx.session && ctx.session.data){
-        //   return ctx.session.data;
-        // } else {
+        if(ctx.session && ctx.session.data){
+          return ctx.session.data;
+        } else {
           return axios.get(`http://172.18.0.1:8000/data/`,{headers: { connection: "keep-alive" }})
             .then(resp =>{
               ctx.session = []
              ctx.session.data = resp.data;
               return resp.data
             } );
-       // }
+       }
 
       }
     }
