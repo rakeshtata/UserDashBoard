@@ -37,7 +37,8 @@ export  function useAddUserApi(){
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
-      addUser(name: "${user.name}",age: ${parseInt(user.age)},gender: "${user.gender}"){
+      addUser(input : {name: "${user.name}",age: ${parseInt(user.age)},gender: "${user.gender}"}){
+        id,  
         name,
         age,
         gender
@@ -59,7 +60,8 @@ export  function useEditUserApi(){
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
-      editUser(name: "${user.name}",age: ${parseInt(user.age)},gender:"${user.gender}"){
+      editUser(id: "${user.id}" , input : {name: "${user.name}",age: ${parseInt(user.age)},gender:"${user.gender}"}){
+        id,  
         name,
         age,
         gender

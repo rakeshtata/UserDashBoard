@@ -23,11 +23,11 @@ services:
     depends_on:
       - redis
     environment:
-      - REDIS_HOST=redis
+      - REDIS_HOST=172.18.0.1
       - REDIS_PORT=6379
       # - REDIS_URL=redis://redis:6379
-    links:
-      - redis
+    # links:
+    #   - redis
 
 
   nginx:
@@ -51,7 +51,31 @@ services:
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - redis:/data    
-    
+
+  # mongodb:
+  #   image: mongodb/mongodb-community-server:latest # Use the official MongoDB Community Server image
+  #   container_name: mongodb # Assign a name to your container
+  #   ports:
+  #     - "27017:27017" # Map host port 27017 to container port 27017
+  #   volumes:
+  #     - ./mongodb_data:/data/db # Persist data in a named volume
+  #     - ./mongo-init:/docker-entrypoint-initdb.d 
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin # Set initial root username
+  #     MONGO_INITDB_ROOT_PASSWORD: password # Set initial root password
+  #     MONGO_INITDB_DATABASE: mydb
+  #   restart: unless-stopped # Restart the container unless manually stopped  
+
+  # mongo-express:
+  #   image: mongo-express:1.0.0-20
+  #   container_name: mongo-express
+  #   restart: always
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  #     ME_CONFIG_MONGODB_SERVER: mongodb
 
 networks:
   app-network:
@@ -59,3 +83,5 @@ networks:
 volumes:
   redis:
     driver: local
+  mongodb_data: # Define the named volume for data persistence
+    driver: local  
