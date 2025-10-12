@@ -6,39 +6,10 @@ import { NotFoundException } from '@nestjs/common';
 import { UserDTO } from './models/user.dto';
 import { Logger } from '@nestjs/common';
 
-// class RedisCache {
-//   constructor(private cacheManager: RedisCacheService) {}
-//   async setCacheValue(KEY, value) {
-//     await this.cacheManager.set(KEY, value);
-//   }
-
-//   async getCacheValue(KEY) {
-//     await this.cacheManager.get(KEY);
-//   }
-// }
-
-// Example usage (provide a RedisCacheService instance):
-// const redisCache = new RedisCache(cacheManager);
-
-
-
-
 @Resolver((of) => User)
 export class UserResolver {
   constructor(private readonly userService: UserService, private cacheManager: RedisCacheService) {}
   
-// You can initialize redisCache inside a method or the constructor if needed.
-// Example: this.redisCache = new RedisCache(this.cacheManager);
-// @Query((returns) => User)
-// async userById(@Args('id', { type: () => String }) id: string) {
-//   const user = await this.userService.getUser({ id });
-//   if (!user) {
-//     throw new NotFoundException(id);
-//   }
-//   return user;
-// }
-
-
   @Query((returns) => [User])
   async users() {
     const cacheVal = await this.cacheManager.get('data');

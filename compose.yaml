@@ -22,9 +22,11 @@ services:
       - app-network   
     depends_on:
       - redis
+      - mongodb
     environment:
       - REDIS_HOST=172.18.0.1
       - REDIS_PORT=6379
+      - MONGO_URI= mongodb://mongodb:27017/mydb
       # - REDIS_URL=redis://redis:6379
     # links:
     #   - redis
@@ -39,37 +41,33 @@ services:
       - ./static:/usr/share/nginx/html
     depends_on:
       - server-app
-    restart: always
     networks:
       - app-network
 
   redis:
     image: redis:6.2-alpine
-    restart: always
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - redis:/data    
 
-  # mongodb:
-  #   image: mongodb/mongodb-community-server:latest # Use the official MongoDB Community Server image
-  #   container_name: mongodb # Assign a name to your container
-  #   ports:
-  #     - "27017:27017" # Map host port 27017 to container port 27017
-  #   volumes:
-  #     - ./mongodb_data:/data/db # Persist data in a named volume
-  #     - ./mongo-init:/docker-entrypoint-initdb.d 
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: admin # Set initial root username
-  #     MONGO_INITDB_ROOT_PASSWORD: password # Set initial root password
-  #     MONGO_INITDB_DATABASE: mydb
-  #   restart: unless-stopped # Restart the container unless manually stopped  
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb # Assign a name to your container
+    ports:
+      - "27017:27017" # Map host port 27017 to container port 27017
+    volumes:
+      - ./mongodb_data:/data/db # Persist data in a named volume
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # optional for seeding data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin # Set initial root username
+      MONGO_INITDB_ROOT_PASSWORD: password # Set initial root password
+      MONGO_INITDB_DATABASE: mydb
 
   # mongo-express:
   #   image: mongo-express:1.0.0-20
   #   container_name: mongo-express
-  #   restart: always
   #   ports:
   #     - "8081:8081"
   #   environment:

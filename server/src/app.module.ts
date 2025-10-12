@@ -8,57 +8,34 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import * as redisStore from 'cache-manager-redis-store';
-// import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 import { Logger } from '@nestjs/common';
+import {UsersModule,} from './user.module';
 
 
 @Module({
   imports: [
-    // MongooseModule.forRoot('mongodb://localhost/user'),
-    CacheModule.registerAsync({
-                useFactory: async () => {
-                let retryCount = 0;
-                const maxRetries = 3;
-                const redisHost = process.env.REDIS_HOST || '172.18.0.1';
-                const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10);
-                const redisClient = new Redis({
-                  host: redisHost,
-                  port: redisPort,
-                  retryStrategy: (times) => {
-                    retryCount++;
-                    if (retryCount > maxRetries) {
-                      Logger.error('Max Redis retry attempts reached', '', 'Redis');
-                      return null; // Stop retrying
-                    }
-                    Logger.warn(`Redis retry attempt #${retryCount}`, 'Redis');
-                    return Math.min(times * 100, 2000); // Wait before next retry
-                  },
-                });
-
-                redisClient.on('connect', () => {
-                  Logger.log('Redis connection established', 'Redis');
-                });
-
-                redisClient.on('error', (err) => {
-                  Logger.error('Redis connection failed: ' + err.message, '', 'Redis');
-                });
-
-                return {
-                  store: redisStore,
-                  redisInstance: redisClient,
-                  ttl: 60000,
-                };
-              },
-              
-            }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
+    //MongooseModule.forRoot('mongodb://admin:password@172.18.0.1/mydb?authSource=admin'),
+    MongooseModule.forRootAsync({
+      useFactory: async () => {
+        let retries = 3;
+        while (retries > 0) {
+          try {
+            return {
+              uri: 'mongodb://admin:password@172.18.0.1/mydb?authSource=admin', // Your MongoDB connection string
+            };
+          } catch (error) {
+            console.error(`Failed to connect to MongoDB. Retrying (${retries - 1} attempts left)...`, error);
+            retries--;
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+          }
+        }
+        throw new Error('Failed to connect to MongoDB after multiple retries.');
+      },
     }),
-    
-            
+    UsersModule       
   ],
   controllers: [],
-  providers: [UserService, RedisCacheService, ActivityService, UserResolver,ActivityResolver ],
+  providers:  [],
 })
 export class AppModule {}

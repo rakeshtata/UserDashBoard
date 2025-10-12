@@ -3,3 +3,5 @@
 /server/package-lock.json
 /web/package-lock.json
 /kubernetes-manifests
+/mongodb_data
+/~

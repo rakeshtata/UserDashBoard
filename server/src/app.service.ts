@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Logger } from '@nestjs/common';
+import { UserDTO } from './models/user.dto';
 
 
 @Injectable()
@@ -17,31 +18,35 @@ export class ActivityService {
 
 @Injectable()
 export class UserService {
-  // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
   getUser(args: { id: string }): Promise<any> {
     return axios.get(`http://172.18.0.1:8000/data/${args.id}`, { headers: { connection: "keep-alive" } })
                 .then(resp => resp.data);
   }
 
   getUsers(): Promise<any> {
-    return axios.get(`http://172.18.0.1:8000/data`, { headers: { connection: "keep-alive" } })
-                .then(resp => resp.data);
-    // return this.userModel.find().exec();
+    // return axios.get(`http://172.18.0.1:8000/data`, { headers: { connection: "keep-alive" } })
+    //             .then(resp => resp.data);
+    return this.userModel.find().exec();
   }
 
   addUser({ name, gender, age }): Promise<any> {
-    return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
-          .then(res => res.data);
+    // return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
+    //       .then(res => res.data);
+    const createdUser = new this.userModel({ name, gender, age });
+    return createdUser.save();
   }
 
   editUser({ name, gender, age, id }): Promise<any> {
-    return axios.patch('http://:172.18.0.1:8000/data', { name, gender, age, id })
-          .then(res => res.data);
+    // return axios.patch('http://:172.18.0.1:8000/data', { name, gender, age, id })
+    //       .then(res => res.data);
+    return this.userModel.findByIdAndUpdate(id, { name, gender, age, id }, { new: true }).exec();
   }
 
   deleteUser(args: { id: string }): Promise<any> {
-    return axios.delete(`http://:172.18.0.1:8000/data/${args.id}`,{ headers: { connection: "keep-alive" } })
-                .then(resp => resp.data);
+    // return axios.delete(`http://:172.18.0.1:8000/data/${args.id}`,{ headers: { connection: "keep-alive" } })
+    //             .then(resp => resp.data);
+    return this.userModel.findByIdAndDelete(args.id).exec();
   }
 }
 
