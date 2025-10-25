@@ -33,7 +33,8 @@ export class UserService {
   addUser({ name, gender, age }): Promise<any> {
     // return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
     //       .then(res => res.data);
-    const createdUser = new this.userModel({ name, gender, age });
+    const id = 0;
+    const createdUser = new this.userModel({ name, gender, age, id });
     return createdUser.save();
   }
 
