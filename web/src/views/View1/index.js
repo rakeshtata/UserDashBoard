@@ -22,7 +22,8 @@ const View1 = (props) => {
       const userval = {
         'name': nameRef.current.value,
         'age': ageRef.current.value,
-        'gender': genderRef.current.value
+        'gender': genderRef.current.value,
+        'id': edit? user.id : undefined,
       }
       edit ? mutateEdit(userval) : mutateAdd(userval);
       setAdd(false);

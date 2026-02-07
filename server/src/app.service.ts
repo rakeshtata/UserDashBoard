@@ -10,9 +10,14 @@ import { UserDTO } from './models/user.dto';
 
 @Injectable()
 export class ActivityService {
-  getActivities(args: { id: string }): Promise<any> {
-    return axios.get(`http://172.18.0.1:8000/data/${args.id}`, { headers: { connection: "keep-alive" } })
-                .then(resp => resp.data.activities);
+getActivities(args: { id: string }): Promise<any> {
+  const numId = Number(args.id);
+  if (Number.isNaN(numId)) {
+    throw new Error('Invalid id');
+  }
+  const id = ((numId - 1) % 10) + 1;
+  return axios.get(`http://172.18.0.1:8000/data/${id}`, { headers: { connection: "keep-alive" } })
+              .then(resp => resp.data.activities);
 }
 }
 
@@ -30,11 +35,12 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  addUser({ name, gender, age }): Promise<any> {
+  async addUser({ name, gender, age }): Promise<any> {
     // return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
     //       .then(res => res.data);
-    const id = 0;
-    const createdUser = new this.userModel({ name, gender, age, id });
+    const last = await this.userModel.findOne().sort({ id: -1 }).select('id').exec();
+    const nextId = last && typeof last.id === 'number' ? last.id + 1 : 1;
+    const createdUser = new this.userModel({ name, gender, age, nextId });
     return createdUser.save();
   }
 

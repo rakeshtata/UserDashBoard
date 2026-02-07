@@ -62,11 +62,5 @@ db.users.insertMany([
     "name": "Mary",
     "gender": "Female",
     "age": 29,
-  },
-  {
-    "name": "nbc",
-    "gender": "female",
-    "age": 16,
-    "id": 11
   }
 ]);

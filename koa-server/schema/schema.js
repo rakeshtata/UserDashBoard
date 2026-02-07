@@ -1,5 +1,4 @@
 const graphql = require('graphql');
-const axios = require('axios');
 const {
   GraphQLObjectType,
   GraphQLString,
@@ -8,6 +7,15 @@ const {
   GraphQLList,
   GraphQLNonNull
 } = graphql;
+
+const {
+  fetchUsers,
+  fetchUserById,
+  fetchActivities,
+  addUser,
+  editUser,
+  deleteUser
+} = require('../data/api');
 
 const ActivitiesType = new GraphQLObjectType({
   name: 'Activities',
@@ -20,10 +28,10 @@ const ActivitiesType = new GraphQLObjectType({
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
-    id: { type: GraphQLString },
+    id: { type: GraphQLInt },
     name: { type: GraphQLString },
     age: { type: GraphQLInt },
-    gender: { type: GraphQLString}
+    gender: { type: GraphQLString }
   })
 });
 
@@ -32,31 +40,35 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     activities: {
       type: new GraphQLList(ActivitiesType),
-      args: { id: { type: GraphQLString } },
-      resolve(parentValue, args, ctx) {
-        if(ctx.session && ctx.session.data){
-          return ctx.session.data[args.id].activities;
-        } else {
-        //console.log(ctx.session.data)
-          return axios.get(`http://172.18.0.1:8000/data/${args.id}`,{headers: { connection: "keep-alive" }})
-            .then(resp => resp.data.activities);
-      }
+      args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+      async resolve(parentValue, args, ctx) {
+        try {
+          return await fetchActivities(args.id);
+        } catch (err) {
+          // In production you might hide internal errors; keep message friendly
+          throw new Error('Failed to load activities');
+        }
       }
     },
     users: {
       type: new GraphQLList(UserType),
-      resolve(parentValue, args,ctx) {
-        if(ctx.session && ctx.session.data){
-          return ctx.session.data;
-        } else {
-          return axios.get(`http://172.18.0.1:8000/data/`,{headers: { connection: "keep-alive" }})
-            .then(resp =>{
-              ctx.session = []
-             ctx.session.data = resp.data;
-              return resp.data
-            } );
-       }
-
+      async resolve() {
+        try {
+          return await fetchUsers();
+        } catch (err) {
+          throw new Error('Failed to load users');
+        }
+      }
+    },
+    user: {
+      type: UserType,
+      args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+      async resolve(parentValue, args) {
+        try {
+          return await fetchUserById(args.id);
+        } catch (err) {
+          throw new Error('User not found');
+        }
       }
     }
   }
@@ -68,13 +80,16 @@ const mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        name: { type: GraphQLString },
-        age: {type: GraphQLInt},
-        gender: {type: GraphQLString}
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
+        gender: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parentValue, { name, gender, age }) {
-        return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
-          .then(res => res.data);
+      async resolve(parentValue, { name, gender, age }) {
+        try {
+          return await addUser({ name, gender, age });
+        } catch (err) {
+          throw new Error('Failed to add user');
+        }
       }
     },
     deleteUser: {
@@ -82,28 +97,35 @@ const mutation = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
       },
-      resolve(parentValue, { id }) {
-        return axios.delete(`http://172.18.0.1:8000/data/${id}`)
-          .then(res => res.data);
+      async resolve(parentValue, { id }) {
+        try {
+          return await deleteUser(id);
+        } catch (err) {
+          throw new Error('Failed to delete user');
+        }
       }
     },
     editUser: {
       type: UserType,
       args: {
-        name: {type: GraphQLString},
-        age: {type: GraphQLInt},
-        gender: {type: GraphQLString}
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt },
+        gender: { type: GraphQLString }
       },
-      resolve(parentValue, args){
-        return axios.patch(`http://172.18.0.1:8000/data/${args.id}`,args)
-          .then(res => res.data)
+      async resolve(parentValue, args) {
+        try {
+          const { id, ...payload } = args;
+          return await editUser(id, payload);
+        } catch (err) {
+          throw new Error('Failed to edit user');
+        }
       }
     }
   }
 });
 
-
 module.exports = new GraphQLSchema({
-  mutation,
-  query: RootQuery
+  query: RootQuery,
+  mutation
 });

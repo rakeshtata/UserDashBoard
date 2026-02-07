@@ -5,3 +5,8 @@
 /kubernetes-manifests
 /mongodb_data
 /~
+
+# Ignore any node_modules (including koa-server)
+node_modules/
+/koa-server/node_modules
+/koa-server/package-lock.json

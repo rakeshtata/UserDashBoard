@@ -2,7 +2,9 @@ import { Field, ID, ObjectType, Int } from '@nestjs/graphql';
 
 @ObjectType({ description: 'users' })
 export class User {
-  @Field((type) => ID)
+  // @Field((type) => ID)
+  // id: string;
+  @Field()
   id: string;
 
   @Field()
