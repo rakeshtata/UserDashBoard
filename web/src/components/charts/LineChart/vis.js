@@ -25,7 +25,6 @@ const draw = (props) => {
         d.count = +d.count;
     });
 
-    // Add X axis --> it is a date format
     let x = d3.scaleTime()
         .domain(d3.extent(data, function (d) { return d.date; }))
         .range([0, width]);
@@ -34,7 +33,6 @@ const draw = (props) => {
         .attr("class", "axisBlue")
         .call(d3.axisBottom(x));
 
-    // Add Y axis
     var y = d3.scaleLinear()
         .domain([0, d3.max(data, function (d) { return +d.count; })])
         .range([height, 0]);
@@ -42,7 +40,6 @@ const draw = (props) => {
         .attr("class", "axisBlue")
         .call(d3.axisLeft(y));
 
-    // Add the line
     svg.append("path")
         .datum(data)
         .attr("fill", "none")

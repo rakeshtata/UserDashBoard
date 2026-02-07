@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { Layout } from 'antd';
-import View1 from './views/View1';
-import View2 from './views/View2';
-import View3 from './views/View3';
-import View4 from './views/View4';
-import View5 from './views/View5';
-import View6 from './views/View6';
-import './dashboard.css';
+import View1 from './pages/View1';
+import View2 from './pages/View2';
+import View3 from './pages/View3';
+import View4 from './pages/View4';
+import View5 from './pages/View5';
+import View6 from './pages/View6';
+import './styles/dashboard.css';
 import { useAtom } from 'jotai'
 import {  useUpdateAtom, useAtomValue } from "jotai/utils";
 import { dataState, selectedUserState, modeState } from './store'
-import { useUserApi,useActivityApi } from './useDataApi';
+import { useUserApi,useActivityApi } from './hooks/useDataApi';
 
 const { Sider, Content } = Layout;
 

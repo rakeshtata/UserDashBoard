@@ -15,12 +15,6 @@ const draw = (props) => {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // format the data
-    // data.forEach(function(d) {
-    //     d.age = +d.age;
-    // });
-
-    // Scale the range of the data in the domains
     let x = d3.scaleBand()
           .range([0, width])
           .padding(0.1);
@@ -29,7 +23,6 @@ const draw = (props) => {
     x.domain(data.map(function(d) { return d.name; }));
     y.domain([0, d3.max(data, function(d) { return d.age; })]);
 
-    // append the rectangles for the bar chart
     svg.selectAll(".bar")
         .data(data)
         .enter().append("rect")
@@ -39,13 +32,11 @@ const draw = (props) => {
         .attr("y", function(d) { return y(d.age); })
         .attr("height", function(d) { return height - y(d.age); });
 
-    // add the x Axis
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .attr("class", "axisBlue")
         .call(d3.axisBottom(x));
 
-    // add the y Axis
     svg.append("g")
         .attr("class", "axisBlue")
         .call(d3.axisLeft(y));

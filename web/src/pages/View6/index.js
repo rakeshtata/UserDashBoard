@@ -2,8 +2,8 @@ import React,{useState} from 'react';
 import { List } from 'antd';
 import './view6.css';
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
-import { filteredDataState, selectedUserState, modeState } from './../../store'
-import { useActivityApi } from './../../useDataApi';
+import { filteredDataState, selectedUserState, modeState } from '../../store'
+import { useActivityApi } from '../../hooks/useDataApi';
 
 const View6 = (props) => {
      const data = useAtomValue(filteredDataState);

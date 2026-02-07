@@ -1,6 +1,6 @@
 import { useUpdateAtom } from "jotai/utils";
 import { useMutation } from "react-query";
-import { dataState,activityState } from "./store";
+import { dataState,activityState } from "../store";
 import { GraphQLClient, gql } from "graphql-request";
 
 

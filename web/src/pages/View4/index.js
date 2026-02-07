@@ -1,8 +1,8 @@
 import React from 'react';
 import './view4.css';
-import LineChart from '../../charts/LineChart';
+import LineChart from '../../components/charts/LineChart';
 import { useAtomValue } from "jotai/utils";
-import { activityState, modeState } from './../../store'
+import { activityState, modeState } from '../../store'
 
 const View4 = (props) => {
     const width = 1100,

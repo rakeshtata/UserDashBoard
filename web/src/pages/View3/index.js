@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Slider, Checkbox, Divider, Switch } from 'antd';
 import './view3.css';
 import {  useUpdateAtom, useAtomValue } from "jotai/utils";
-import { greaterThenAgeState, includedGenderState, modeState } from './../../store';
+import { greaterThenAgeState, includedGenderState, modeState } from '../../store';
 
 const CheckboxGroup = Checkbox.Group;
 

@@ -36,24 +36,24 @@ export class UserService {
   }
 
   async addUser({ name, gender, age }): Promise<any> {
-    // return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
-    //       .then(res => res.data);
-    const last = await this.userModel.findOne().sort({ id: -1 }).select('id').exec();
-    const nextId = last && typeof last.id === 'number' ? last.id + 1 : 1;
-    const createdUser = new this.userModel({ name, gender, age, nextId });
-    return createdUser.save();
+    return axios.post('http://:172.18.0.1:8000/data', { name, gender, age })
+          .then(res => res.data);
+    // const last = await this.userModel.findOne().sort({ id: -1 }).select('id').exec();
+    // const nextId = last && typeof last.id === 'number' ? last.id + 1 : 1;
+    // const createdUser = new this.userModel({ name, gender, age, nextId });
+    // return createdUser.save();
   }
 
   editUser({ name, gender, age, id }): Promise<any> {
-    // return axios.patch('http://:172.18.0.1:8000/data', { name, gender, age, id })
-    //       .then(res => res.data);
-    return this.userModel.findByIdAndUpdate(id, { name, gender, age, id }, { new: true }).exec();
+    return axios.patch('http://:172.18.0.1:8000/data', { name, gender, age, id })
+          .then(res => res.data);
+    // return this.userModel.findByIdAndUpdate(id, { name, gender, age, id }, { new: true }).exec();
   }
 
   deleteUser(args: { id: string }): Promise<any> {
-    // return axios.delete(`http://:172.18.0.1:8000/data/${args.id}`,{ headers: { connection: "keep-alive" } })
-    //             .then(resp => resp.data);
-    return this.userModel.findByIdAndDelete(args.id).exec();
+    return axios.delete(`http://:172.18.0.1:8000/data/${args.id}`,{ headers: { connection: "keep-alive" } })
+                .then(resp => resp.data);
+    // return this.userModel.findByIdAndDelete(args.id).exec();
   }
 }
 

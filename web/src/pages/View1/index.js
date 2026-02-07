@@ -3,8 +3,8 @@ import { Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
 import './view1.css';
 import { useAtomValue } from "jotai/utils";
-import { selectedUserState , modeState} from './../../store'
-import { useAddUserApi, useEditUserApi, useDeleteUserApi } from './../../useDataApi';
+import { selectedUserState , modeState} from '../../store'
+import { useAddUserApi, useEditUserApi, useDeleteUserApi } from '../../hooks/useDataApi';
 
 const View1 = (props) => {
     const user = useAtomValue(selectedUserState);
