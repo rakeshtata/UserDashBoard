@@ -10,11 +10,12 @@ import Redis from 'ioredis';
 import * as redisStore from 'cache-manager-redis-store';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Logger } from '@nestjs/common';
-import {UsersModule,} from './user.module';
-
+import {UsersModule} from './user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     //MongooseModule.forRoot('mongodb://admin:password@172.18.0.1/mydb?authSource=admin'),
     MongooseModule.forRootAsync({
       useFactory: async () => {

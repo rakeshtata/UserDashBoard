@@ -1,12 +1,19 @@
-import { useUpdateAtom } from "jotai/utils";
+import { useUpdateAtom, useAtomValue } from "jotai/utils";
 import { useMutation } from "react-query";
 import { dataState,activityState } from "../store";
+import { authAtom } from "../store/authStore";
 import { GraphQLClient, gql } from "graphql-request";
 
+function useAppGraphQLClient() {
+  const token = useAtomValue(authAtom);
+  return new GraphQLClient("http://localhost/graphql", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  });
+}
 
-export  function useUserApi(){
+export function useUserApi(){
   const setData = useUpdateAtom(dataState);
-  const graphQLClient = new GraphQLClient("http://localhost/graphql")
+  const graphQLClient = useAppGraphQLClient();
 
   const query = gql`{
                     users {
@@ -32,8 +39,8 @@ export  function useUserApi(){
   return {mutateUser: () => mutate()}
 }
 
-export  function useAddUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost/graphql")
+export function useAddUserApi(){
+  const graphQLClient = useAppGraphQLClient();
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
@@ -55,8 +62,8 @@ export  function useAddUserApi(){
   return {mutateAdd: (user) => mutate(user)}
 }
 
-export  function useEditUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost/graphql")
+export function useEditUserApi(){
+  const graphQLClient = useAppGraphQLClient();
 
   const { mutate } = useMutation(
     async (user) => await graphQLClient.request(gql`mutation {
@@ -78,8 +85,8 @@ export  function useEditUserApi(){
   return {mutateEdit: (user) => mutate(user)}
 }
 
-export  function useDeleteUserApi(){
-  const graphQLClient = new GraphQLClient("http://localhost/graphql")
+export function useDeleteUserApi(){
+  const graphQLClient = useAppGraphQLClient();
 
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`mutation {
@@ -98,9 +105,9 @@ export  function useDeleteUserApi(){
   return {mutateDelete: (userid) => mutate(userid)}
 }
 
-export  function useActivityApi(){
+export function useActivityApi(){
   const setActivity = useUpdateAtom(activityState);
-  const graphQLClient = new GraphQLClient("http://localhost/graphql")
+  const graphQLClient = useAppGraphQLClient();
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`
         {

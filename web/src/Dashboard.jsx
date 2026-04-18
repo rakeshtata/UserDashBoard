@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import View1 from './pages/View1';
 import View2 from './pages/View2';
 import View3 from './pages/View3';
@@ -8,11 +8,12 @@ import View5 from './pages/View5';
 import View6 from './pages/View6';
 import './styles/dashboard.css';
 import { useAtom } from 'jotai'
-import {  useUpdateAtom, useAtomValue } from "jotai/utils";
+import { useUpdateAtom, useAtomValue } from "jotai/utils";
 import { dataState, selectedUserState, modeState } from './store'
-import { useUserApi,useActivityApi } from './hooks/useDataApi';
+import { logoutAtom } from './store/authStore';
+import { useUserApi, useActivityApi } from './hooks/useDataApi';
 
-const { Sider, Content } = Layout;
+const { Sider, Content, Header } = Layout;
 
 const Dashboard = ({props}) => {
   const [data] = useAtom(dataState);
@@ -20,6 +21,7 @@ const Dashboard = ({props}) => {
   const {mutateUser} = useUserApi();
   const {mutateActivity} = useActivityApi();
   const mode = useAtomValue(modeState);
+  const setLogout = useUpdateAtom(logoutAtom);
 
   useEffect(() => {
         mutateUser()
@@ -33,8 +35,14 @@ const Dashboard = ({props}) => {
   }, [data])
 
     return (
-        <div>
-            <Layout style={{ height: 920 }}>
+        <Layout style={{ minHeight: '100vh' }}>
+            <Header style={{ background: '#001529', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>Dashboard Analytics</div>
+                <Button type="danger" icon="logout" onClick={() => setLogout()}>
+                  Logout
+                </Button>
+            </Header>
+            <Layout>
                 <Sider width={300} className='sider_dark'>
                     <Content style={{ height: 200 }}>
                         <View1/>
@@ -60,9 +68,8 @@ const Dashboard = ({props}) => {
                     </Layout>
                 </Layout>
             </Layout>
-        </div>
+        </Layout>
     )
-
 }
 
 export default Dashboard;
