@@ -28,3 +28,17 @@ This application is a multi-service user dashboard platform orchestrated with Do
 
 ---
 This file provides a high-level context for developers and operators working with this application. For more details, refer to the respective service directories and configuration files.
+
+## Future Improvements & TODOs
+1. **Authentication (Passport.js Integration)**:
+   - Implement `@nestjs/passport` and `passport-local`/`passport-jwt` in the `server` backend for secure user authentication.
+   - Build a Login Page in the `web` frontend (using Ant Design) to send user credentials and securely store the resulting JWT.
+   - Secure server API routes and GraphQL resolvers using `JwtAuthGuard`.
+2. **Frontend Upgrades**:
+   - Migrate the `web` frontend from Create React App (`react-scripts`) to a modern build tool like **Vite** for faster development and modern Node.js support.
+   - Upgrade legacy libraries (React 16.x and Ant Design 3.x) to modern versions.
+3. **Infrastructure & DevOps**:
+   - **Database**: Uncomment and connect the `mongodb` service in `compose.yaml` to persist application and user data.
+   - **Docker Stability**: Add `healthcheck` blocks for Redis and MongoDB, and configure the backend to wait for them (`depends_on: condition: service_healthy`).
+   - **Environment Variables**: Extract hardcoded configurations (e.g., `MONGO_URI`, Redis hosts) from `compose.yaml` into a dedicated `.env` file.
+   - **Nginx Routing**: Review `nginx.conf` to effectively separate and route traffic between the React frontend and NestJS backend API.

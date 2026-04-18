@@ -10,3 +10,11 @@
 node_modules/
 /koa-server/node_modules
 /koa-server/package-lock.json
+chrome-dev.sh
+context.md
+web/pnpm-lock.yaml
+
+server/pnpm-lock.yaml
+server/pnpm-workspace.yaml
+web/dist
+web/public

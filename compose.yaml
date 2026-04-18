@@ -13,6 +13,8 @@ services:
     image: dashboard-web-image
     ports:
       - "3000:3000" 
+    networks:
+      - app-network
     restart: unless-stopped  
 
   server-app:
