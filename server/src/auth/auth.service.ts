@@ -13,7 +13,7 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const authData = await this.authenticatorService.getAuthentication({ name: username });
-    const authRecord = Array.isArray(authData) ? authData[0] : authData;
+    const authRecord = Array.isArray(authData) ? authData : authData;
 
     if (authRecord && authRecord.password === pass) {
       const { password, ...result } = authRecord;

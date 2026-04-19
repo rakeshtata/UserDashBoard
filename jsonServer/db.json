@@ -1,9 +1,18 @@
 {
-  "auth": {
+  "auth": [
+    {
+      "id": "admin",
       "userId": 1,
       "username": "admin",
       "password": "password"
-  },
+    },
+    {
+      "id": "user1",
+      "userId": 2,
+      "username": "user1",
+      "password": "password1"
+    }
+  ],
   "data": [
     {
       "id": 1,

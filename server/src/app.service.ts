@@ -10,7 +10,7 @@ import { UserDTO } from './models/user.dto';
 @Injectable()
 export class AuthenicatorService {
 getAuthentication(args: { name: string }): Promise<any> {
-  return axios.get(`http://172.18.0.1:8000/auth?name=${args.name}`, { headers: { connection: "keep-alive" } })
+  return axios.get(`http://172.18.0.1:8000/auth/${args.name}`, { headers: { connection: "keep-alive" } })
               .then(resp => resp.data);
 }
 }
