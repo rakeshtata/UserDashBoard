@@ -1,11 +1,11 @@
 import React,{useState} from 'react';
 import { List } from 'antd';
-import './view6.css';
+import './userList.css';
 import { useAtomValue, useSetAtom } from "jotai";
 import { filteredDataState, selectedUserState, modeState } from '../../store'
 import { useActivityApi } from '../../hooks/useDataApi';
 
-const View6 = (props) => {
+const UserList = (props) => {
      const data = useAtomValue(filteredDataState);
      const dispatchUser = useSetAtom(selectedUserState);
      const {mutateActivity} = useActivityApi();
@@ -19,7 +19,7 @@ const View6 = (props) => {
     }
 
     return (
-        <div id='view6' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
+        <div id='userList' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
             <div className={mode === "dark"? 'header header_dark' : 'header header_light'}>User List</div>
             <List
                 size="small"
@@ -37,4 +37,4 @@ const View6 = (props) => {
 
 }
 
-export default  View6
+export default  UserList

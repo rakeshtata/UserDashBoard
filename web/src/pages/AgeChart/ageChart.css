@@ -1,0 +1,15 @@
+#ageChart {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#ageChart .header {
+    flex-shrink: 0;
+}
+
+.scroller {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+}

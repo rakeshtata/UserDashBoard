@@ -1,12 +1,12 @@
 import React,{useState,useRef} from 'react';
 import { Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
-import './view1.css';
+import './userProfile.css';
 import { useAtomValue } from "jotai";
 import { selectedUserState , modeState} from '../../store'
 import { useAddUserApi, useEditUserApi, useDeleteUserApi } from '../../hooks/useDataApi';
 
-const View1 = (props) => {
+const UserProfile = (props) => {
     const user = useAtomValue(selectedUserState);
     const mode = useAtomValue(modeState);
     const [add,setAdd] = useState(false);
@@ -37,7 +37,7 @@ const View1 = (props) => {
     }
 
     return (
-        <div id='view1' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
+        <div id='userProfile' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
             <div className={mode === "dark"? 'header header_dark' : 'header header_light'}>User Profile</div>
             <div>
             {add || edit ?
@@ -91,4 +91,4 @@ const View1 = (props) => {
     )
 }
 
-export default View1;
+export default UserProfile;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Slider, Checkbox, Divider, Switch } from 'antd';
-import './view3.css';
+import './filters.css';
 import {  useSetAtom, useAtomValue } from "jotai";
 import { greaterThenAgeState, includedGenderState, modeState } from '../../store';
 
@@ -9,7 +9,7 @@ const CheckboxGroup = Checkbox.Group;
 const plainOptions = ['Male', 'Female', 'Unknown'];
 const defaultCheckedList = ['Male', 'Female', 'Unknown'];
 
-const View3 = (props) =>  {
+const Filters = (props) =>  {
 
   const dispatchGender = useSetAtom(includedGenderState);
   const dispatchAge = useSetAtom(greaterThenAgeState);
@@ -52,7 +52,7 @@ const View3 = (props) =>  {
 
 
     return (
-        <div id='view3' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
+        <div id='filters' className={mode === "dark"? 'pane pane_dark' : 'pane pane_light'}>
             <div className={mode === "dark"? 'header header_dark' : 'header header_light'}>Filter</div>
             <h3>Gender</h3>
             <div style={{ width: 275, margin: 5 }}>
@@ -84,4 +84,4 @@ const View3 = (props) =>  {
 
 }
 
-export default View3;
+export default Filters;

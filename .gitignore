@@ -18,3 +18,4 @@ server/pnpm-lock.yaml
 server/pnpm-workspace.yaml
 web/dist
 web/public
+.env

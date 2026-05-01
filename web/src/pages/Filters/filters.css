@@ -1,9 +1,9 @@
-#view3 {
+#filters {
     height: 400px;
     /* background-color: yellow; */
 }
 
-#view3 > h3 {
+#filters > h3 {
     margin-left: 5px;
     color: #7f9ef3;
 }

@@ -19,26 +19,27 @@ This application is a multi-service user dashboard platform orchestrated with Do
 - **mongodb_data**: (Commented) For MongoDB data persistence.
 
 ## Environment Variables
-- `server-app` uses `REDIS_HOST=redis` and `REDIS_PORT=6379` for Redis connection.
+- Environment variables for `server-app` are loaded from the `.env` file, including `REDIS_HOST`, `REDIS_PORT`, and `MONGO_URI` for Redis and MongoDB connections.
 
 ## Key Points
-- Backend uses Redis for caching, with host set to `redis` for Docker network resolution.
+- Backend uses Redis for caching, with host configured via environment variables from `.env` for Docker network resolution.
 - Nginx serves as a reverse proxy and static file server.
-- MongoDB is available but currently commented out.
+- MongoDB is connected via `MONGO_URI` from `.env` for persistent data storage.
 
 ---
 This file provides a high-level context for developers and operators working with this application. For more details, refer to the respective service directories and configuration files.
 
 ## Future Improvements & TODOs
-1. **Authentication (Passport.js Integration)**:
-   - Implement `@nestjs/passport` and `passport-local`/`passport-jwt` in the `server` backend for secure user authentication.
-   - Build a Login Page in the `web` frontend (using Ant Design) to send user credentials and securely store the resulting JWT.
-   - Secure server API routes and GraphQL resolvers using `JwtAuthGuard`.
-2. **Frontend Upgrades**:
-   - Migrate the `web` frontend from Create React App (`react-scripts`) to a modern build tool like **Vite** for faster development and modern Node.js support.
-   - Upgrade legacy libraries (React 16.x and Ant Design 3.x) to modern versions.
-3. **Infrastructure & DevOps**:
-   - **Database**: Uncomment and connect the `mongodb` service in `compose.yaml` to persist application and user data.
-   - **Docker Stability**: Add `healthcheck` blocks for Redis and MongoDB, and configure the backend to wait for them (`depends_on: condition: service_healthy`).
-   - **Environment Variables**: Extract hardcoded configurations (e.g., `MONGO_URI`, Redis hosts) from `compose.yaml` into a dedicated `.env` file.
-   - **Nginx Routing**: Review `nginx.conf` to effectively separate and route traffic between the React frontend and NestJS backend API.
+1. **Frontend Modernization**:
+   - **Library Upgrades**: Upgrade legacy libraries (React 16.x to 18+, Ant Design 3.x to 5.x) to leverage modern rendering and reduced bundle sizes.
+   - **D3.js**: Upgrade from v4 to v7+ for modularity and better performance.
+2. **Performance & Core Web Vitals**:
+   - **Code Splitting**: Implement `React.lazy` and `Suspense` for dashboard widgets to improve LCP.
+   - **Backend Compression**: Enable `compression` middleware in the NestJS server for smaller JSON payloads.
+3. **Accessibility (a11y)**:
+   - **Semantic HTML**: Replace generic layouts with landmark roles (`<main>`, `<nav>`, `<aside>`).
+   - **Accessible Data Viz**: Enhance D3 charts with `title`, `desc`, and `aria-label` tags for screen reader support.
+   - **Focus Management**: Implement programmatic focus shifting for interactive dashboard elements.
+4. **Security Hardening**:
+   - **Headers**: Integrate `helmet` for secure HTTP headers.
+   - **CORS**: Restrict CORS to specific origins to prevent unauthorized cross-origin requests.

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Layout, Button } from 'antd';
-import View1 from './pages/View1';
-import View2 from './pages/View2';
-import View3 from './pages/View3';
-import View4 from './pages/View4';
-import View5 from './pages/View5';
-import View6 from './pages/View6';
+import UserProfile from './pages/UserProfile';
+import GenderChart from './pages/GenderChart';
+import Filters from './pages/Filters';
+import UserActivities from './pages/UserActivities';
+import AgeChart from './pages/AgeChart';
+import UserList from './pages/UserList';
 import './styles/dashboard.css';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai'
 import { dataState, selectedUserState, modeState } from './store'
@@ -44,25 +44,25 @@ const Dashboard = ({props}) => {
             <Layout>
                 <Sider width={300} className='sider_dark'>
                     <Content style={{ height: 200 }}>
-                        <View1/>
+                        <UserProfile/>
                     </Content>
                     <Content style={{ height: 300 }}>
-                        <View2 />
+                        <GenderChart />
                     </Content>
                     <Content style={{ height: 400 }}>
-                        <View3/>
+                        <Filters/>
                     </Content>
                 </Sider>
                 <Layout>
                     <Content style={{ height: 300}} className='sider_dark'>
-                        <View4 />
+                        <UserActivities />
                     </Content>
                     <Layout style={{ height: 600}} className='sider_dark'>
                         <Content>
-                            <View5/>
+                            <AgeChart/>
                         </Content>
                         <Sider width={300} className='sider_dark'>
-                            <View6/>
+                            <UserList/>
                         </Sider>
                     </Layout>
                 </Layout>

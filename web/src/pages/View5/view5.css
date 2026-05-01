@@ -1,8 +1,0 @@
-#view5 {
-    height: 600px;
-}
-
-.scroller {
-  overflow-x: scroll;
-  overflow-y: hidden;
-}
