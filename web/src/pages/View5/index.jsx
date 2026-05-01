@@ -1,7 +1,7 @@
 import React from 'react';
 import BarChart from '../../components/charts/BarChart';
 import './view5.css';
-import { useAtomValue } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { filteredDataState, selectedUserState, modeState } from '../../store'
 
 const View5 = (props) => {

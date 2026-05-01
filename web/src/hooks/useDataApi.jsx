@@ -1,4 +1,4 @@
-import { useUpdateAtom, useAtomValue } from "jotai/utils";
+import { useSetAtom, useAtomValue } from "jotai";
 import { useMutation } from "react-query";
 import { dataState,activityState } from "../store";
 import { authAtom } from "../store/authStore";
@@ -12,7 +12,7 @@ function useAppGraphQLClient() {
 }
 
 export function useUserApi(){
-  const setData = useUpdateAtom(dataState);
+  const setData = useSetAtom(dataState);
   const graphQLClient = useAppGraphQLClient();
 
   const query = gql`{
@@ -106,7 +106,7 @@ export function useDeleteUserApi(){
 }
 
 export function useActivityApi(){
-  const setActivity = useUpdateAtom(activityState);
+  const setActivity = useSetAtom(activityState);
   const graphQLClient = useAppGraphQLClient();
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`

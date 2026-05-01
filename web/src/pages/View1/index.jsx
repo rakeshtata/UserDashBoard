@@ -2,7 +2,7 @@ import React,{useState,useRef} from 'react';
 import { Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
 import './view1.css';
-import { useAtomValue } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { selectedUserState , modeState} from '../../store'
 import { useAddUserApi, useEditUserApi, useDeleteUserApi } from '../../hooks/useDataApi';
 

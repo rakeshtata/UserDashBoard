@@ -1,13 +1,13 @@
 import React,{useState} from 'react';
 import { List } from 'antd';
 import './view6.css';
-import { useAtomValue, useUpdateAtom } from "jotai/utils";
+import { useAtomValue, useSetAtom } from "jotai";
 import { filteredDataState, selectedUserState, modeState } from '../../store'
 import { useActivityApi } from '../../hooks/useDataApi';
 
 const View6 = (props) => {
      const data = useAtomValue(filteredDataState);
-     const dispatchUser = useUpdateAtom(selectedUserState);
+     const dispatchUser = useSetAtom(selectedUserState);
      const {mutateActivity} = useActivityApi();
      const [selectedId,setSelectedId] = useState('')
      const mode = useAtomValue(modeState);

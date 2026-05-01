@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Form, Icon, Input, Button, Card, message } from 'antd';
-import { useUpdateAtom } from 'jotai/utils';
+import { useSetAtom } from 'jotai';
 import { loginAtom } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 
 const Login = ({ form }) => {
   const [loading, setLoading] = useState(false);
-  const setToken = useUpdateAtom(loginAtom);
+  const setToken = useSetAtom(loginAtom);
   const navigate = useNavigate();
 
   const handleSubmit = e => {

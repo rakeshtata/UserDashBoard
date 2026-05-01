@@ -1,7 +1,7 @@
 import React from 'react';
 import './view4.css';
 import LineChart from '../../components/charts/LineChart';
-import { useAtomValue } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { activityState, modeState } from '../../store'
 
 const View4 = (props) => {

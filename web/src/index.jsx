@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import Dashboard from './Dashboard';
 import Login from './pages/Login';
-import { Provider } from "jotai";
+import { Provider, useAtomValue } from "jotai";
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAtomValue } from 'jotai/utils';
 import { authAtom } from './store/authStore';
 
 const queryClient = new QueryClient()

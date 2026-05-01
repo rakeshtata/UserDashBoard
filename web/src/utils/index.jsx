@@ -1,8 +1,8 @@
-import { useAtomValue, useUpdateAtom } from "jotai/utils";
+import { useAtomValue, useSetAtom } from "jotai";
 const {dataState, greaterThenAgeState, includedGenderState, filteredDataState} from './store';
 
 const data = useAtomValue(dataState);
-const dispatchFilteredData = useUpdateAtom(filteredDataState);
+const dispatchFilteredData = useSetAtom(filteredDataState);
 const genderList = useAtomValue(includedGenderState);
 const age = useAtomValue(greaterThenAgeState);
 

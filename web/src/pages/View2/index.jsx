@@ -1,7 +1,7 @@
 import React from 'react';
 import './view2.css';
 import PieChart from '../../components/charts/PieChart';
-import { useAtomValue } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { filteredDataState, modeState } from '../../store'
 
 const View2 = () => {

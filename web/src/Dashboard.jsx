@@ -7,8 +7,7 @@ import View4 from './pages/View4';
 import View5 from './pages/View5';
 import View6 from './pages/View6';
 import './styles/dashboard.css';
-import { useAtom } from 'jotai'
-import { useUpdateAtom, useAtomValue } from "jotai/utils";
+import { useAtom, useSetAtom, useAtomValue } from 'jotai'
 import { dataState, selectedUserState, modeState } from './store'
 import { logoutAtom } from './store/authStore';
 import { useUserApi, useActivityApi } from './hooks/useDataApi';
@@ -17,11 +16,11 @@ const { Sider, Content, Header } = Layout;
 
 const Dashboard = ({props}) => {
   const [data] = useAtom(dataState);
-  const dispatchUser = useUpdateAtom(selectedUserState);
+  const dispatchUser = useSetAtom(selectedUserState);
   const {mutateUser} = useUserApi();
   const {mutateActivity} = useActivityApi();
   const mode = useAtomValue(modeState);
-  const setLogout = useUpdateAtom(logoutAtom);
+  const setLogout = useSetAtom(logoutAtom);
 
   useEffect(() => {
         mutateUser()

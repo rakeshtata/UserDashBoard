@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Slider, Checkbox, Divider, Switch } from 'antd';
 import './view3.css';
-import {  useUpdateAtom, useAtomValue } from "jotai/utils";
+import {  useSetAtom, useAtomValue } from "jotai";
 import { greaterThenAgeState, includedGenderState, modeState } from '../../store';
 
 const CheckboxGroup = Checkbox.Group;
@@ -11,13 +11,13 @@ const defaultCheckedList = ['Male', 'Female', 'Unknown'];
 
 const View3 = (props) =>  {
 
-  const dispatchGender = useUpdateAtom(includedGenderState);
-  const dispatchAge = useUpdateAtom(greaterThenAgeState);
+  const dispatchGender = useSetAtom(includedGenderState);
+  const dispatchAge = useSetAtom(greaterThenAgeState);
   const [checkedList,setCheckedList] = useState(defaultCheckedList);
   const [indeterminate, setIndeterminate] = useState(true);
   const [checkAll, setCheckAll] = useState(false);
   const [mode_l, setMode_l] = useState("Light")
-  const dispatchMode = useUpdateAtom(modeState);
+  const dispatchMode = useSetAtom(modeState);
   const mode = useAtomValue(modeState);
 
 
