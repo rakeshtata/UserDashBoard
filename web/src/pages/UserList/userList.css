@@ -3,6 +3,10 @@
     /* background-color: blueviolet; */
 }
 
-.header {
-    background-color: #1c2755;
-  }
+#userList.pane_dark .ant-list-item {
+    color: #fff;
+}
+
+#userList.pane_light .ant-list-item {
+    color: #000;
+}

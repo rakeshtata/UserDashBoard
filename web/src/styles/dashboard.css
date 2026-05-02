@@ -10,11 +10,13 @@
 .pane_light {
   background: #fff;
   border-color: #fff;
+  color: #000;
 }
 
 .pane_dark {
   background: #141414;
   border-color: #141414;
+  color: #fff;
 }
 
 .header {
@@ -27,6 +29,7 @@
 
 .header_light {
    background-color: #eee;
+   color: #000;
 }
 
 .header_dark {

@@ -26,8 +26,13 @@ const draw = (props) => {
         .append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
+        .attr('role', 'img')
+        .attr('aria-label', 'Pie chart showing gender distribution')
         .append('g')
         .attr('transform', 'translate(' + (width / 2 + margin.left) + ',' + (height / 2 + margin.top) + ')');
+
+    svg.append('title').text('Gender Distribution');
+    svg.append('desc').text('A pie chart showing the count of Male, Female, and Unknown users.');
 
     let radius = Math.min(width, height) / 2;
 
@@ -51,6 +56,10 @@ const draw = (props) => {
         .attr('d', arc)
         .attr('fill', function (d, i) {
             return color(d.data.label);
+        })
+        .attr('role', 'graphics-symbol')
+        .attr('aria-label', function(d) {
+            return d.data.label + ': ' + d.data.count;
         });
     let legendG = svg.selectAll(".legend")
         .data(pie(dataset))

@@ -1,6 +1,6 @@
 import React,{useState,useRef} from 'react';
 import { Avatar, Button } from 'antd';
-import 'antd/dist/antd.css';
+import { UserOutlined } from '@ant-design/icons';
 import './userProfile.css';
 import { useAtomValue } from "jotai";
 import { selectedUserState , modeState} from '../../store'
@@ -71,7 +71,7 @@ const UserProfile = (props) => {
               </div>
               :<div>
                 <div className={'avatar-view'}>
-                    <Avatar shape="square" size={120} icon="user" style={mode === "dark"?{backgroundColor: '#144848'}:""}/>
+                    <Avatar shape="square" size={120} icon={<UserOutlined />} style={mode === "dark"?{backgroundColor: '#144848'}:""}/>
                 </div>
                 <div className="right-profile-view">
                   <div className={mode === "dark"? 'info-view info_dark' : 'info-view'}>

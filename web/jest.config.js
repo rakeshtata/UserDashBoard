@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest'
   },
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/tests/'],
   collectCoverage: false,
   coverageDirectory: '<rootDir>/coverage/',
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/']

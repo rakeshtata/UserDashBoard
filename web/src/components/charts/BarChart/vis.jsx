@@ -12,8 +12,13 @@ const draw = (props) => {
     let svg = d3.select('.vis-barchart').append('svg')
             .attr('width',width + margin.left + margin.right)
             .attr('height',height + margin.top + margin.bottom)
+            .attr('role', 'img')
+            .attr('aria-label', 'Bar chart showing age distribution of users')
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append('title').text('User Age Distribution');
+    svg.append('desc').text('A bar chart representing the ages of different users.');
 
     let x = d3.scaleBand()
           .range([0, width])
@@ -26,11 +31,16 @@ const draw = (props) => {
     svg.selectAll(".bar")
         .data(data)
         .enter().append("rect")
-        .attr("fill", (d) => mode === 'dark' ? (d.id === selected.id?'#cb2b83':'#75204f') : ( d.id === selected.id?'#65b7f3':'steelblue'))
+        .attr("class", "bar")
+        .attr("fill", (d) => mode === 'dark' ? (d.id === (selected && selected.id)?'#cb2b83':'#75204f') : ( d.id === (selected && selected.id)?'#65b7f3':'steelblue'))
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d.age); })
-        .attr("height", function(d) { return height - y(d.age); });
+        .attr("height", function(d) { return height - y(d.age); })
+        .attr('role', 'graphics-symbol')
+        .attr('aria-label', function(d) {
+            return d.name + ' age ' + d.age;
+        });
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")

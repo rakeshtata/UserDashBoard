@@ -24,13 +24,26 @@ const UserList = (props) => {
             <List
                 size="small"
                 bordered
-                style={mode==='dark' ?{color: "steelblue" , 'border-color': "black"}:{}}
+                style={mode==='dark' ?{'border-color': "black"}:{}}
                 dataSource={data}
-                renderItem={user => <List.Item onClick = {() => selectUser(user)}>
-                    <div style={selectedId===user.id?{'font-weight':'bolder','font-size': 'large'}:{'font-weight':'lighter'}}>
-                        {user.name + ':' + user.age}
-                    </div>
-                </List.Item>}
+                renderItem={user => (
+                    <List.Item 
+                        onClick = {() => selectUser(user)}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                selectUser(user);
+                            }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={selectedId === user.id}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div style={selectedId===user.id?{'font-weight':'bolder','font-size': 'large'}:{'font-weight':'lighter'}}>
+                            {user.name + ':' + user.age}
+                        </div>
+                    </List.Item>
+                )}
             />
         </div>
     )

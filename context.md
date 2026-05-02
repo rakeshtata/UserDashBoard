@@ -31,15 +31,16 @@ This file provides a high-level context for developers and operators working wit
 
 ## Future Improvements & TODOs
 1. **Frontend Modernization**:
-   - **Library Upgrades**: Upgrade legacy libraries (React 16.x to 18+, Ant Design 3.x to 5.x) to leverage modern rendering and reduced bundle sizes.
-   - **D3.js**: Upgrade from v4 to v7+ for modularity and better performance.
+   - ✅ **React Upgrade**: Upgraded from React 16.x to **React 18.3.1** and migrated to the `createRoot` API.
+   - ✅ **Ant Design Upgrade**: Upgraded legacy Ant Design 3.x to **Ant Design 6.3.7**, migrated all legacy components (Form, Icon) to modern APIs, and transitioned to CSS-in-JS.
+   - ✅ **D3.js**: Upgrade from v4 to v7+ for modularity and better performance.
 2. **Performance & Core Web Vitals**:
-   - **Code Splitting**: Implement `React.lazy` and `Suspense` for dashboard widgets to improve LCP.
-   - **Backend Compression**: Enable `compression` middleware in the NestJS server for smaller JSON payloads.
+   - ✅ **Code Splitting**: Implement `React.lazy` and `Suspense` for dashboard widgets to improve LCP.
+   - ✅ **Backend Compression**: Enable `compression` middleware in the NestJS server for smaller JSON payloads.
 3. **Accessibility (a11y)**:
-   - **Semantic HTML**: Replace generic layouts with landmark roles (`<main>`, `<nav>`, `<aside>`).
-   - **Accessible Data Viz**: Enhance D3 charts with `title`, `desc`, and `aria-label` tags for screen reader support.
-   - **Focus Management**: Implement programmatic focus shifting for interactive dashboard elements.
+   - ✅ **Semantic HTML**: Replace generic layouts with landmark roles (`<main>`, `<nav>`, `<aside>`).
+   - ✅ **Accessible Data Viz**: Enhance D3 charts with `title`, `desc`, and `aria-label` tags for screen reader support.
+   - ✅ **Focus Management**: Implement programmatic focus shifting for interactive dashboard elements.
 4. **Security Hardening**:
-   - **Headers**: Integrate `helmet` for secure HTTP headers.
-   - **CORS**: Restrict CORS to specific origins to prevent unauthorized cross-origin requests.
+   - ✅ **Headers**: Integrate `helmet` for secure HTTP headers.
+   - ✅ **CORS**: Restrict CORS to specific origins to prevent unauthorized cross-origin requests.
