@@ -7,5 +7,4 @@ export class Activity {
 
   @Field(() => Int)
   count: number;
-
 }

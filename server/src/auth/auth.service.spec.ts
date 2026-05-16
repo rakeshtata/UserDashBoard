@@ -38,8 +38,14 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user without password if credentials match', async () => {
-      const mockUser = { name: 'testuser', password: 'testpassword', userId: '1' };
-      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(mockUser);
+      const mockUser = {
+        name: 'testuser',
+        password: 'testpassword',
+        userId: '1',
+      };
+      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(
+        mockUser,
+      );
 
       const result = await service.validateUser('testuser', 'testpassword');
       expect(result).toEqual({ name: 'testuser', userId: '1' });
@@ -47,15 +53,23 @@ describe('AuthService', () => {
     });
 
     it('should return null if password does not match', async () => {
-      const mockUser = { name: 'testuser', password: 'wrongpassword', userId: '1' };
-      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(mockUser);
+      const mockUser = {
+        name: 'testuser',
+        password: 'wrongpassword',
+        userId: '1',
+      };
+      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(
+        mockUser,
+      );
 
       const result = await service.validateUser('testuser', 'testpassword');
       expect(result).toBeNull();
     });
 
     it('should return null if user is not found', async () => {
-      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(null);
+      (authenticatorService.getAuthentication as jest.Mock).mockResolvedValue(
+        null,
+      );
 
       const result = await service.validateUser('nonexistent', 'pass');
       expect(result).toBeNull();
@@ -67,7 +81,10 @@ describe('AuthService', () => {
       const user = { username: 'testuser', userId: '1' };
       const result = await service.login(user);
       expect(result).toEqual({ access_token: 'test_token' });
-      expect(jwtService.sign).toHaveBeenCalledWith({ username: 'testuser', sub: '1' });
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        username: 'testuser',
+        sub: '1',
+      });
     });
   });
 });

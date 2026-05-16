@@ -27,7 +27,9 @@ describe('GraphQL (e2e isolation)', () => {
         {
           provide: UserService,
           useValue: {
-            getUsers: jest.fn().mockResolvedValue([{ name: 'Test User', gender: 'M', age: 30 }]),
+            getUsers: jest
+              .fn()
+              .mockResolvedValue([{ name: 'Test User', gender: 'M', age: 30 }]),
           },
         },
         {

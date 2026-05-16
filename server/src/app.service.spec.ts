@@ -51,7 +51,10 @@ describe('UserService', () => {
 
       const result = await service.getUser({ id: '1' });
       expect(result).toEqual(mockUser);
-      expect(mockedAxios.get).toHaveBeenCalledWith('http://172.18.0.1:8000/data/1', expect.any(Object));
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'http://172.18.0.1:8000/data/1',
+        expect.any(Object),
+      );
     });
   });
 
@@ -62,7 +65,10 @@ describe('UserService', () => {
 
       const result = await service.addUser(userData);
       expect(result).toEqual({ ...userData, id: '123' });
-      expect(mockedAxios.post).toHaveBeenCalledWith('http://:172.18.0.1:8000/data', userData);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'http://:172.18.0.1:8000/data',
+        userData,
+      );
     });
   });
 });
@@ -85,20 +91,28 @@ describe('ActivityService', () => {
   describe('getActivities', () => {
     it('should fetch activities and return them', async () => {
       const mockActivities = [{ id: 1, action: 'login' }];
-      mockedAxios.get.mockResolvedValue({ data: { activities: mockActivities } });
+      mockedAxios.get.mockResolvedValue({
+        data: { activities: mockActivities },
+      });
 
       const result = await service.getActivities({ id: '1' });
       expect(result).toEqual(mockActivities);
       // (1-1)%10 + 1 = 1
-      expect(mockedAxios.get).toHaveBeenCalledWith('http://172.18.0.1:8000/data/1', expect.any(Object));
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'http://172.18.0.1:8000/data/1',
+        expect.any(Object),
+      );
     });
 
     it('should handle id wrapping correctly', async () => {
-        mockedAxios.get.mockResolvedValue({ data: { activities: [] } });
-        
-        await service.getActivities({ id: '11' });
-        // (11-1)%10 + 1 = 1
-        expect(mockedAxios.get).toHaveBeenCalledWith('http://172.18.0.1:8000/data/1', expect.any(Object));
+      mockedAxios.get.mockResolvedValue({ data: { activities: [] } });
+
+      await service.getActivities({ id: '11' });
+      // (11-1)%10 + 1 = 1
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'http://172.18.0.1:8000/data/1',
+        expect.any(Object),
+      );
     });
 
     it('should throw error for invalid id', () => {

@@ -6,6 +6,8 @@ services:
       - "dockerhost:172.18.0.1"
     ports:
       - "8000:8000"
+    networks:
+      - app-network
     restart: unless-stopped  
 
   web-app:

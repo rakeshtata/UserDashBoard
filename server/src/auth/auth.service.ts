@@ -8,11 +8,13 @@ export class AuthService {
   constructor(
     // private userService: UserService,
     private jwtService: JwtService,
-    private authenticatorService: AuthenicatorService
-  ) { }
+    private authenticatorService: AuthenicatorService,
+  ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const authData = await this.authenticatorService.getAuthentication({ name: username });
+    const authData = await this.authenticatorService.getAuthentication({
+      name: username,
+    });
     const authRecord = Array.isArray(authData) ? authData : authData;
 
     if (authRecord && authRecord.password === pass) {

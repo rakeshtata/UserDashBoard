@@ -1,5 +1,7 @@
+import { useRef, useEffect } from "react";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useMutation } from "react-query";
+import { io } from "socket.io-client";
 import { dataState,activityState } from "../store";
 import { authAtom } from "../store/authStore";
 import { GraphQLClient, gql } from "graphql-request";
@@ -107,6 +109,23 @@ export function useDeleteUserApi(){
 
 export function useActivityApi(){
   const setActivity = useSetAtom(activityState);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    // Connect to the WebSocket server via Nginx proxy
+    socketRef.current = io("http://localhost");
+
+    socketRef.current.on("activity_update", (data) => {
+      setActivity(data);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [setActivity]);
+
   const graphQLClient = useAppGraphQLClient();
   const { mutate } = useMutation(
     async (userid) => await graphQLClient.request(gql`

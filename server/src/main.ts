@@ -5,13 +5,13 @@ import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Security: HTTP headers
   app.use(helmet());
-  
+
   // Performance: Compression
   app.use(compression());
-  
+
   // Security: Restrict CORS
   app.enableCors({
     origin: 'http://localhost:3000',

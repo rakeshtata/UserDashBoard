@@ -122,7 +122,9 @@ describe('ActivityResolver', () => {
     it('should fetch from service and cache', async () => {
       const activities = [{ action: 'logout' }];
       (cacheManager.get as jest.Mock).mockResolvedValue(null);
-      (activityService.getActivities as jest.Mock).mockResolvedValue(activities);
+      (activityService.getActivities as jest.Mock).mockResolvedValue(
+        activities,
+      );
 
       const result = await resolver.activities('1');
       expect(result).toEqual(activities);
