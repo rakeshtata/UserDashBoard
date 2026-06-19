@@ -2,8 +2,6 @@ services:
   jsonServer-app:
     build: jsonServer/
     image: dashboard-jsonserver-image
-    extra_hosts:
-      - "dockerhost:172.18.0.1"
     ports:
       - "8000:8000"
     networks:
@@ -19,11 +17,19 @@ services:
       - app-network
     restart: unless-stopped  
 
-  server-app:
+  bff-gateway:
     build: server/
-    image: dashboard-server-image
+    image: dashboard-bff-image
     ports:
       - "4000:4000"
+    environment:
+      - APP_NAME=bff-gateway
+      - AUTH_SERVICE_URL=http://auth-service:4001
+      - USER_SERVICE_URL=http://user-service:4002
+      - ANALYTICS_SERVICE_URL=http://analytics-service:4003
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/mydb?authSource=admin
     networks:
       - app-network   
     depends_on:
@@ -31,7 +37,36 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-    env_file: .env
+    restart: unless-stopped
+
+  auth-service:
+    build: server/
+    image: dashboard-auth-image
+    environment:
+      - APP_NAME=auth-service
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  user-service:
+    build: server/
+    image: dashboard-user-image
+    environment:
+      - APP_NAME=user-service
+    networks:
+      - app-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  analytics-service:
+    build: server/
+    image: dashboard-analytics-image
+    environment:
+      - APP_NAME=analytics-service
+    networks:
+      - app-network
     restart: unless-stopped
 
   nginx:
@@ -42,7 +77,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./static:/usr/share/nginx/html
     depends_on:
-      - server-app
+      - bff-gateway
     networks:
       - app-network
     restart: unless-stopped  
@@ -65,16 +100,16 @@ services:
 
   mongodb:
     image: mongo:7.0
-    container_name: mongodb # Assign a name to your container
+    container_name: mongodb
     ports:
-      - "27017:27017" # Map host port 27017 to container port 27017
+      - "27017:27017"
     volumes:
-      - mongodb_data:/data/db # Persist data in a named volume
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # optional for seeding data
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin # Set initial root username
-      MONGO_INITDB_ROOT_PASSWORD: password # Set initial root password
-      MONGO_INITDB_DATABASE: mydb
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=mydb
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -84,12 +119,11 @@ services:
       - app-network
     restart: unless-stopped  
 
-
 networks:
   app-network:
     driver: bridge    
 volumes:
   redis:
     driver: local
-  mongodb_data: # Define the named volume for data persistence
+  mongodb_data:
     driver: local  

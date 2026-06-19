@@ -7,7 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { getModelToken } from '@nestjs/mongoose';
-import { User } from '../src/schemas/user.schema';
+import { User } from '@app/shared';
 
 describe('GraphQL (e2e isolation)', () => {
   let app: INestApplication;

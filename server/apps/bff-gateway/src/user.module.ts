@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schemas/user.schema';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { HttpModule } from '@nestjs/axios';
 import { UserResolver, ActivityResolver } from './app.resolver';
-import { UserService, ActivityService, RedisCacheService } from './app.service';
+import { ActivityService, RedisCacheService, UserService } from './app.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import Redis from 'ioredis';
 import * as redisStore from 'cache-manager-redis-store';
@@ -12,7 +9,7 @@ import { Logger } from '@nestjs/common';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    HttpModule,
     CacheModule.registerAsync({
       useFactory: async () => {
         let retryCount = 0;
@@ -47,10 +44,6 @@ import { Logger } from '@nestjs/common';
           ttl: 60000,
         };
       },
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
     }),
   ],
 

@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { AnalyticsGateway } from './analytics.gateway';
 import { ActivityService } from './app.service';
 import { io, Socket as ClientSocket } from 'socket.io-client';
+import { of, interval, map } from 'rxjs';
 
 describe('AnalyticsGateway', () => {
   let gateway: AnalyticsGateway;
@@ -28,6 +29,17 @@ describe('AnalyticsGateway', () => {
         { date: '2024-01-02', count: 20 },
         { date: '2024-01-03', count: 30 },
       ]),
+      streamActivities: jest.fn().mockReturnValue(
+        interval(100).pipe(
+          map(() => ({
+            activities: [
+              { date: '2024-01-01', count: 10 },
+              { date: '2024-01-02', count: 20 },
+              { date: '2024-01-03', count: 30 },
+            ]
+          }))
+        )
+      ),
     };
 
     module = await Test.createTestingModule({
@@ -157,6 +169,7 @@ describe('AnalyticsGateway', () => {
     it('should handle ActivityService errors gracefully', async () => {
       const mockActivityServiceWithError = {
         getActivities: jest.fn().mockRejectedValue(new Error('Service error')),
+        streamActivities: jest.fn().mockReturnValue(of({ activities: [] })),
       };
 
       const testModule = await Test.createTestingModule({

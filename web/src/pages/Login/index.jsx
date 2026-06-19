@@ -14,22 +14,30 @@ const Login = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost/auth/login', {
+      const res = await fetch('http://localhost:4000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
-      
+
       if (!res.ok) {
         throw new Error('Invalid credentials');
       }
-      
+
       const data = await res.json();
-      setToken(data.access_token);
+      const accessToken = data?.access_token || data?.accessToken || data?.token;
+      if (!accessToken) {
+        throw new Error('Login response missing access token');
+      }
+
+      setToken(accessToken);
       message.success('Login successful!');
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (error) {
-      message.error('Login failed! Please check your credentials.');
+      console.error('Login error:', error);
+      message.error(error.message === 'Login response missing access token'
+        ? 'Login failed: invalid server response.'
+        : 'Login failed! Please check your credentials.');
     } finally {
       setLoading(false);
     }

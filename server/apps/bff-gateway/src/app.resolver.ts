@@ -3,7 +3,7 @@ import { User } from './models/user.model';
 import { Activity } from './models/activity.model';
 import { UserService, ActivityService, RedisCacheService } from './app.service';
 import { NotFoundException } from '@nestjs/common';
-import { UserDTO } from './models/user.dto';
+import { UserDTO } from '@app/shared';
 import { Logger } from '@nestjs/common';
 
 @Resolver((of) => User)
