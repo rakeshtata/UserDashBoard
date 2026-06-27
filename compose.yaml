@@ -53,6 +53,7 @@ services:
     image: dashboard-user-image
     environment:
       - APP_NAME=user-service
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/mydb?authSource=admin
     networks:
       - app-network
     depends_on:

@@ -8,7 +8,7 @@ import { GraphQLClient, gql } from "graphql-request";
 
 function useAppGraphQLClient() {
   const token = useAtomValue(authAtom);
-  return new GraphQLClient("http://localhost/graphql", {
+  return new GraphQLClient("/graphql", {
     headers: token ? { Authorization: `Bearer ${token}` } : {}
   });
 }
@@ -113,7 +113,7 @@ export function useActivityApi(){
 
   useEffect(() => {
     // Connect to the WebSocket server via Nginx proxy
-    socketRef.current = io("http://localhost");
+    socketRef.current = io();
 
     socketRef.current.on("activity_update", (data) => {
       setActivity(data);

@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://admin:password@mongodb:27017/mydb?authSource=admin'),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://admin:password@mongodb:27017/mydb?authSource=admin'),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],

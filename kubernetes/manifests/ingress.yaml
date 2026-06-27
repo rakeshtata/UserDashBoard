@@ -1,0 +1,63 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          # GraphQL and Auth/User REST API traffic goes to bff-gateway
+          - path: /graphql
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          - path: /users
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          - path: /activities
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          # Socket.io WebSocket traffic goes to bff-gateway
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-gateway
+                port:
+                  number: 4000
+          # All other traffic goes to frontend web-app
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-app
+                port:
+                  number: 3000

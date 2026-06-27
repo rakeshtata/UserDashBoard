@@ -1,0 +1,55 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: user-dashboard
+build:
+  local:
+    push: false
+  artifacts:
+    # Mock API Server
+    - image: dashboard-jsonserver-image
+      context: jsonServer
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'db.json'
+            dest: '/db.json'
+
+    # React Frontend Client
+    - image: dashboard-web-image
+      context: web
+      docker:
+        dockerfile: Dockerfile
+
+    # NestJS Monorepo Backend Services
+    # Tip: Since these use the same context and Dockerfile, Skaffold will build them.
+    # To optimize builds, Skaffold caches layers, but you can also use Skaffold's file sync
+    # to hot-reload source code inside the running containers during development.
+    - image: dashboard-bff-image
+      context: server
+      docker:
+        dockerfile: Dockerfile
+    - image: dashboard-auth-image
+      context: server
+      docker:
+        dockerfile: Dockerfile
+    - image: dashboard-user-image
+      context: server
+      docker:
+        dockerfile: Dockerfile
+    - image: dashboard-analytics-image
+      context: server
+      docker:
+        dockerfile: Dockerfile
+
+manifests:
+  rawYaml:
+    - kubernetes/manifests/secrets.yaml
+    - kubernetes/manifests/configmaps.yaml
+    - kubernetes/manifests/mongodb.yaml
+    - kubernetes/manifests/redis.yaml
+    - kubernetes/manifests/jsonserver.yaml
+    - kubernetes/manifests/backend-deployments.yaml
+    - kubernetes/manifests/frontend.yaml
+    - kubernetes/manifests/ingress.yaml

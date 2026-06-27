@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonserver-app
+  labels:
+    app: jsonserver-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonserver-app
+  template:
+    metadata:
+      labels:
+        app: jsonserver-app
+    spec:
+      containers:
+        - name: jsonserver-app
+          image: dashboard-jsonserver-image:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonserver-app
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: jsonserver-app
+  type: ClusterIP

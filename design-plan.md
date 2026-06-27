@@ -278,8 +278,137 @@ This integrates WebSocket with your existing NestJS GraphQL setup and React Jota
 
 ### Phase 5: Optional Kubernetes Migration
 - Use Minikube only after 3-4 services are stable
-- Deploy BFF, core services, notification, and event service
-- Use Skaffold for local iteration
+
+## Kubernetes Readiness Plan
+
+### Goals
+- Transition the existing Docker Compose architecture to Kubernetes-friendly deployments
+- Preserve service isolation for frontend, backend, caching, and persistence
+- Add health checks, config management, and persistent storage definitions
+- Keep the current runtime behavior while enabling cluster-based deployment
+
+### What to modernize
+- Separate runtime images for each NestJS app by using shared `server/` image with `APP_NAME`
+- Use Kubernetes `Service` discovery instead of Docker Compose network aliases
+- Move secret values into Kubernetes `Secret`s
+- Add `Deployment` probes for liveness and readiness
+- Use `PersistentVolumeClaim`s for MongoDB and optionally Redis
+- Expose external traffic via an `Ingress` or `LoadBalancer` service
+
+### Recommended K8s resources
+- `Deployment/web-app`
+- `Deployment/bff-gateway`
+- `Deployment/auth-service`
+- `Deployment/user-service`
+- `Deployment/analytics-service`
+- `Deployment/jsonserver-app`
+- `Deployment/nginx`
+- `Deployment/redis`
+- `Deployment/mongodb`
+
+- `Service/web-app`
+- `Service/bff-gateway`
+- `Service/auth-service`
+- `Service/user-service`
+- `Service/analytics-service`
+- `Service/jsonserver-app`
+- `Service/nginx`
+- `Service/redis`
+- `Service/mongodb`
+
+### Key changes from Docker Compose
+- Remove `container_name` usage entirely
+- Use K8s `ConfigMap` / `Secret` for runtime environment variables
+- Keep `nginx.conf` routing, but target service hostnames in-cluster
+- Prefer `Ingress` routing to `nginx` rather than publishing ports directly
+- Preserve existing app ports and GraphQL endpoint structure
+
+### Health and readiness
+- Add simple health routes to each NestJS service, e.g. `/health` or `/status`
+- Configure `livenessProbe` and `readinessProbe` on backend deployments
+- Redis probe: `exec: ["redis-cli", "ping"]` or `tcpSocket: [{ port: 6379 }]`
+- MongoDB probe: `exec: ["mongosh", "--eval", "db.adminCommand('ping')"]`
+
+### Storage
+- `mongodb` should mount a `PersistentVolumeClaim` to `/data/db`
+- `redis` can use a PVC for persistence, or remain ephemeral for dev
+- Do not use hostPath in production; use dynamic storage classes
+
+### Deployment strategy
+1. Build and push container images for: `web-app`, `dashboard-bff`, `auth-service`, `user-service`, `analytics-service`, `jsonserver-app`
+2. Start with a local dev cluster: `minikube`, `kind`, or `microk8s`
+3. Deploy `mongodb`, `redis`, then backend services
+4. Deploy `web-app` and `nginx` last, verify ingress routing
+5. Validate service-to-service traffic and frontend connectivity
+
+### Optional simplification
+- Keep `nginx` for local cluster proxying
+- Or replace it with native Kubernetes `Ingress` rules if you want simpler cloud-native routing
+- If you use an Ingress controller, map `/` to `web-app` and `/graphql` + backend paths to `bff-gateway`
+
+### Next step
+Add a dedicated `k8s/` directory with manifest files for the first deployment target:
+- `k8s/mongodb.yaml`
+- `k8s/redis.yaml`
+- `k8s/backend-deployments.yaml`
+- `k8s/frontend.yaml`
+- `k8s/ingress.yaml`
+- `k8s/secrets.yaml`
+
+This preserves the current architecture while making it cluster-ready for Kubernetes deployment.
+
+## Docker Compose to Kubernetes migration steps
+
+This section tracks the migration plan from Docker Compose to a local Kubernetes environment.
+
+### Status Legend
+- ⬜ **Todo / Planned**
+- ⏳ **In Progress**
+- ✅ **Completed**
+
+---
+
+### Step-by-Step Migration Plan
+
+#### 1. Phase 1: Define Manifests (`kubernetes/manifests/`) ✅
+Create Kubernetes resource definitions that mirror the Docker Compose architecture but utilize cloud-native abstractions.
+- ✅ **1.1. Directory Structure**: Initialize `/kubernetes/manifests/` directory.
+- ✅ **1.2. Secrets and ConfigMaps (`secrets.yaml`, `configmaps.yaml`)**: Convert environment variables from `.env` and `compose.yaml` (e.g., service URLs, Redis host/port, database credentials) into ConfigMaps and Secrets.
+- ✅ **1.3. Persistence & Stateful Services (`mongodb.yaml`, `redis.yaml`)**:
+  - Define `PersistentVolumeClaim` (PVC) for MongoDB and Redis.
+  - Create a ConfigMap for `mongo-init.js` to initialize mock data in MongoDB.
+  - Define Deployments and Services for MongoDB and Redis.
+- ✅ **1.4. Mock Data Server (`jsonserver.yaml`)**: Define Deployment and Service (ClusterIP) for the mock REST API (`jsonServer-app`).
+- ✅ **1.5. Backend Microservices (`backend-deployments.yaml`)**:
+  - Define Deployments for `bff-gateway`, `auth-service`, `user-service`, and `analytics-service`.
+  - Inject ConfigMaps/Secrets into environment variables.
+  - Define standard ClusterIP Services for internal discovery (e.g., `http://auth-service:4001`, `http://user-service:4002`, `http://analytics-service:4003`).
+- ✅ **1.6. Frontend and Reverse Proxy (`frontend.yaml`)**:
+  - Define Deployment and Service (ClusterIP) for `web-app`.
+  - Define ConfigMap for `nginx.conf`.
+  - Define Deployment and Service (NodePort/LoadBalancer) for `nginx` reverse proxy.
+- ✅ **1.7. Ingress Controller Definition (`ingress.yaml`)**:
+  - Define Kubernetes standard `Ingress` resources as an alternative routing mechanism to bypass or replace the standalone `nginx` proxy.
+
+
+#### 2. Phase 2: Build & Registry Preparation ⬜
+- ⬜ **2.1. Build local container images**: Execute docker builds for frontend, backend services, and jsonServer.
+- ⬜ **2.2. Configure image pull policies**: Set `imagePullPolicy: IfNotPresent` to ensure Kubernetes pulls from the local Docker daemon.
+
+#### 3. Phase 3: Deployment & Execution ⬜
+- ⬜ **3.1. Start Local Cluster**: Run minikube / kind with local docker daemon environment reuse.
+- ⬜ **3.2. Apply Configuration & DBs**: Run `kubectl apply -f kubernetes/manifests/secrets.yaml -f kubernetes/manifests/configmaps.yaml -f kubernetes/manifests/mongodb.yaml -f kubernetes/manifests/redis.yaml`.
+- ⬜ **3.3. Apply Backend & Mock Server**: Run `kubectl apply -f kubernetes/manifests/jsonserver.yaml -f kubernetes/manifests/backend-deployments.yaml`.
+- ⬜ **3.4. Apply Frontend & Proxy**: Run `kubectl apply -f kubernetes/manifests/frontend.yaml`.
+
+#### 4. Phase 4: Verification & Validation ⬜
+- ⬜ **4.1. Pod Status Check**: Verify all pods are running successfully.
+- ⬜ **4.2. Verify Database Initialization**: Exec into MongoDB pod and check if `mydb.users` collection is pre-populated from the mounted `mongo-init.js`.
+- ⬜ **4.3. Test API Gateway & Microservices**: Check logs and run test requests to BFF GraphQL `/graphql` endpoint.
+- ⬜ **4.4. Verify Frontend Access**: Open the dashboard in browser via the mapped port/Ingress URL and verify real-time Jotai state updates.
+
+---
+
 
 ## Folder & Deployment Structure
 
@@ -298,9 +427,11 @@ shared/
 kubernetes/
   manifests/
   helm/
+  README.md    # Kubernetes deployment instructions
 compose.yaml
 README.md
 ```
+
 
 ### BFF service structure
 
