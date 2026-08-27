@@ -2,52 +2,50 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@app/shared';
-import axios from 'axios';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async getUser(args: { id: string }): Promise<any> {
-    const resp = await axios.get(`http://jsonServer-app:8000/data/${args.id}`, {
-        headers: { connection: 'keep-alive' },
-    });
+  private toResponse(user: any): any {
+    if (!user) {
+      return null;
+    }
+
+    const plainUser = user.toObject ? user.toObject() : user;
     return {
-        id: resp.data.id,
-        name: resp.data.name,
-        age: resp.data.age,
-        gender: resp.data.gender
+      id: plainUser._id ? plainUser._id.toString() : plainUser.id?.toString(),
+      name: plainUser.name,
+      age: plainUser.age,
+      gender: plainUser.gender,
     };
+  }
+
+  async getUser(args: { id: string }): Promise<any> {
+    const user = await this.userModel.findById(args.id).exec();
+    return this.toResponse(user);
   }
 
   async getUsers(): Promise<any> {
-    return this.userModel.find().exec();
+    const users = await this.userModel.find().exec();
+    return users.map((user) => this.toResponse(user));
   }
 
   async addUser({ name, gender, age }): Promise<any> {
-    const res = await axios.post('http://jsonServer-app:8000/data', { name, gender, age });
-    return {
-        id: res.data.id,
-        name: res.data.name,
-        age: res.data.age,
-        gender: res.data.gender
-    };
+    const createdUser = new this.userModel({ name, age, gender });
+    const savedUser = await createdUser.save();
+    return this.toResponse(savedUser);
   }
 
   async editUser({ name, gender, age, id }): Promise<any> {
-    const res = await axios.patch('http://jsonServer-app:8000/data', { name, gender, age, id });
-    return {
-        id: res.data.id,
-        name: res.data.name,
-        age: res.data.age,
-        gender: res.data.gender
-    };
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, { name, gender, age }, { new: true })
+      .exec();
+    return this.toResponse(updatedUser);
   }
 
   async deleteUser(args: { id: string }): Promise<any> {
-    const resp = await axios.delete(`http://jsonServer-app:8000/data/${args.id}`, {
-        headers: { connection: 'keep-alive' },
-    });
-    return resp.data;
+    const deletedUser = await this.userModel.findByIdAndDelete(args.id).exec();
+    return this.toResponse(deletedUser);
   }
 }

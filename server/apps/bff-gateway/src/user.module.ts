@@ -1,60 +1,13 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { UserResolver, ActivityResolver } from './app.resolver';
-import { ActivityService, RedisCacheService, UserService } from './app.service';
-import { CacheModule } from '@nestjs/cache-manager';
-import Redis from 'ioredis';
-import * as redisStore from 'cache-manager-redis-store';
-import { Logger } from '@nestjs/common';
+import { ActivityService, UserGatewayService } from './app.service';
+import { UserRestAdapter } from './user-rest.adapter';
 
 @Module({
-  imports: [
-    HttpModule,
-    CacheModule.registerAsync({
-      useFactory: async () => {
-        let retryCount = 0;
-        const maxRetries = 3;
-        const redisHost = process.env.REDIS_HOST || 'redis';
-        const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10);
-        const redisClient = new Redis({
-          host: redisHost,
-          port: redisPort,
-          retryStrategy: (times) => {
-            retryCount++;
-            if (retryCount > maxRetries) {
-              Logger.error('Max Redis retry attempts reached', '', 'Redis');
-              return null; // Stop retrying
-            }
-            Logger.warn(`Redis retry attempt #${retryCount}`, 'Redis');
-            return Math.min(times * 100, 2000); // Wait before next retry
-          },
-        });
-
-        redisClient.on('connect', () => {
-          Logger.log('Redis connection established', 'Redis');
-        });
-
-        redisClient.on('error', (err) => {
-          Logger.error('Redis connection failed: ' + err.message, '', 'Redis');
-        });
-
-        return {
-          store: redisStore,
-          redisInstance: redisClient,
-          ttl: 60000,
-        };
-      },
-    }),
-  ],
-
+  imports: [HttpModule],
   controllers: [],
-  providers: [
-    UserService,
-    ActivityService,
-    RedisCacheService,
-    UserResolver,
-    ActivityResolver,
-  ],
-  exports: [UserService, ActivityService, RedisCacheService],
+  providers: [UserGatewayService, ActivityService, UserResolver, ActivityResolver, UserRestAdapter],
+  exports: [UserGatewayService, ActivityService],
 })
-export class UsersModule {}
+export class UserGatewayModule {}

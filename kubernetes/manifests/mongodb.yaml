@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongodb-pvc-v3
+  name: mongodb-pvc-v4
 spec:
   accessModes:
     - ReadWriteOnce
@@ -136,7 +136,7 @@ spec:
       volumes:
         - name: mongodb-data
           persistentVolumeClaim:
-            claimName: mongodb-pvc-v3
+            claimName: mongodb-pvc-v4
         - name: mongodb-init
           configMap:
             name: mongodb-init-configmap

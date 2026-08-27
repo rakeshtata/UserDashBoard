@@ -1,6 +1,6 @@
 # Dockerfile for Node application
 FROM node:20
-WORKDIR /
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .

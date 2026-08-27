@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService, ActivityService } from './app.service';
+import { UserGatewayService, ActivityService } from './app.service';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 
-describe('UserService', () => {
-  let service: UserService;
+describe('UserGatewayService', () => {
+  let service: UserGatewayService;
 
   const mockHttpService = {
     get: jest.fn(),
@@ -16,7 +16,7 @@ describe('UserService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UserService,
+        UserGatewayService,
         {
           provide: HttpService,
           useValue: mockHttpService,
@@ -24,7 +24,7 @@ describe('UserService', () => {
       ],
     }).compile();
 
-    service = module.get<UserService>(UserService);
+    service = module.get<UserGatewayService>(UserGatewayService);
   });
 
   afterEach(() => {
@@ -42,7 +42,7 @@ describe('UserService', () => {
 
       const result = await service.getUser({ id: '1' });
       expect(result).toEqual(mockUser);
-      expect(mockHttpService.get).toHaveBeenCalledWith('http://localhost:4002/users/1');
+      expect(mockHttpService.get).toHaveBeenCalledWith('http://user-service:4002/users/1');
     });
   });
 
@@ -53,7 +53,7 @@ describe('UserService', () => {
 
       const result = await service.getUsers();
       expect(result).toEqual(mockUsers);
-      expect(mockHttpService.get).toHaveBeenCalledWith('http://localhost:4002/users');
+      expect(mockHttpService.get).toHaveBeenCalledWith('http://user-service:4002/users');
     });
   });
 
@@ -66,7 +66,7 @@ describe('UserService', () => {
       const result = await service.addUser(userData);
       expect(result).toEqual(responseData);
       expect(mockHttpService.post).toHaveBeenCalledWith(
-        'http://localhost:4002/users',
+        'http://user-service:4002/users',
         userData,
       );
     });
@@ -80,7 +80,7 @@ describe('UserService', () => {
       const result = await service.editUser(userData);
       expect(result).toEqual(userData);
       expect(mockHttpService.put).toHaveBeenCalledWith(
-        'http://localhost:4002/users/123',
+        'http://user-service:4002/users/123',
         { name: 'Updated User', gender: 'M', age: 26 },
       );
     });
@@ -92,7 +92,7 @@ describe('UserService', () => {
 
       const result = await service.deleteUser({ id: '123' });
       expect(result).toEqual({ success: true });
-      expect(mockHttpService.delete).toHaveBeenCalledWith('http://localhost:4002/users/123');
+      expect(mockHttpService.delete).toHaveBeenCalledWith('http://user-service:4002/users/123');
     });
   });
 });
@@ -136,7 +136,7 @@ describe('ActivityService', () => {
       const result = await service.getActivities({ id: '1' });
       expect(result).toEqual(mockActivities);
       expect(mockHttpService.get).toHaveBeenCalledWith(
-        'http://localhost:4003/analytics/activities/1',
+        'http://analytics-service:4003/analytics/activities/1',
       );
     });
   });
@@ -151,7 +151,7 @@ describe('ActivityService', () => {
 
       const sub = result.subscribe();
       expect(mockHttpService.get).toHaveBeenCalledWith(
-        'http://localhost:4003/analytics/stream/1',
+        'http://analytics-service:4003/analytics/stream/1',
         expect.objectContaining({ responseType: 'stream' }),
       );
       sub.unsubscribe();

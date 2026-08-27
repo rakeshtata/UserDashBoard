@@ -13,12 +13,14 @@ export class UserController {
   @Get()
   async getUsers() {
     const users = await this.userService.getUsers();
-    return { users: users.map(u => ({
-        id: u._id.toString(),
+    return {
+      users: users.map((u) => ({
+        id: u.id,
         name: u.name,
         age: u.age,
-        gender: u.gender
-    })) };
+        gender: u.gender,
+      })),
+    };
   }
 
   @Post()

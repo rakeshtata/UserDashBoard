@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './user.module';
+import { UserGatewayModule } from './user.module';
 import { AuthModule } from './auth/auth.module';
 import { AnalyticsGateway } from './analytics.gateway';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
+    UserGatewayModule,
     AuthModule,
-    UsersModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'apps/bff-gateway/src/schemas/schema.gql'),
@@ -18,7 +18,7 @@ import { join } from 'path';
       playground: true,
     }),
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [AnalyticsGateway],
 })
 export class AppModule {}

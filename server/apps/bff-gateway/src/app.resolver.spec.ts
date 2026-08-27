@@ -1,19 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserResolver, ActivityResolver } from './app.resolver';
-import { UserService, ActivityService, RedisCacheService } from './app.service';
-import { NotFoundException } from '@nestjs/common';
+import { UserGatewayService, ActivityService } from './app.service';
+import { UserRestAdapter } from './user-rest.adapter';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
-  let userService: UserService;
-  let cacheManager: RedisCacheService;
+  let userService: UserGatewayService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserResolver,
         {
-          provide: UserService,
+          provide: UserGatewayService,
           useValue: {
             getUsers: jest.fn(),
             addUser: jest.fn(),
@@ -22,67 +21,61 @@ describe('UserResolver', () => {
           },
         },
         {
-          provide: RedisCacheService,
+          provide: UserRestAdapter,
           useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-            del: jest.fn(),
+            toCreatePayload: jest.fn((input) => input),
+            toUpdatePayload: jest.fn((id, input) => ({ id, ...input })),
           },
         },
       ],
     }).compile();
 
     resolver = module.get<UserResolver>(UserResolver);
-    userService = module.get<UserService>(UserService);
-    cacheManager = module.get<RedisCacheService>(RedisCacheService);
+    userService = module.get<UserGatewayService>(UserGatewayService);
   });
 
-  describe('users', () => {
-    it('should return cached users if available', async () => {
-      const cachedUsers = [{ name: 'Cached' }];
-      (cacheManager.get as jest.Mock).mockResolvedValue(cachedUsers);
+  it('should return users from the downstream REST service', async () => {
+    const users = [{ name: 'DB' }];
+    (userService.getUsers as jest.Mock).mockResolvedValue(users);
 
-      const result = await resolver.users();
-      expect(result).toEqual(cachedUsers);
-      expect(userService.getUsers).not.toHaveBeenCalled();
-    });
-
-    it('should fetch from service and cache if not in cache', async () => {
-      const dbUsers = [{ name: 'DB' }];
-      (cacheManager.get as jest.Mock).mockResolvedValue(null);
-      (userService.getUsers as jest.Mock).mockResolvedValue(dbUsers);
-
-      const result = await resolver.users();
-      expect(result).toEqual(dbUsers);
-      expect(userService.getUsers).toHaveBeenCalled();
-      expect(cacheManager.set).toHaveBeenCalledWith('data', dbUsers);
-    });
-
-    it('should throw NotFoundException if no users found', async () => {
-      (cacheManager.get as jest.Mock).mockResolvedValue(null);
-      (userService.getUsers as jest.Mock).mockResolvedValue(null);
-
-      await expect(resolver.users()).rejects.toThrow(NotFoundException);
-    });
+    const result = await resolver.users();
+    expect(result).toEqual(users);
+    expect(userService.getUsers).toHaveBeenCalled();
   });
 
-  describe('addUser', () => {
-    it('should add user via service', async () => {
-      const input = { name: 'New', gender: 'M', age: 30 };
-      const createdUser = { ...input, id: '1' };
-      (userService.addUser as jest.Mock).mockResolvedValue(createdUser);
+  it('should add user via the downstream REST service', async () => {
+    const input = { name: 'New', gender: 'M', age: 30 };
+    const createdUser = { ...input, id: '1' };
+    (userService.addUser as jest.Mock).mockResolvedValue(createdUser);
 
-      const result = await resolver.addUser(input);
-      expect(result).toEqual(createdUser);
-      expect(userService.addUser).toHaveBeenCalledWith(input);
-    });
+    const result = await resolver.addUser(input);
+    expect(result).toEqual(createdUser);
+    expect(userService.addUser).toHaveBeenCalledWith(input);
+  });
+
+  it('should edit user via the downstream REST service', async () => {
+    const input = { name: 'Updated', gender: 'F', age: 31 };
+    const updatedUser = { ...input, id: '1' };
+    (userService.editUser as jest.Mock).mockResolvedValue(updatedUser);
+
+    const result = await resolver.editUser('1', input);
+    expect(result).toEqual(updatedUser);
+    expect(userService.editUser).toHaveBeenCalledWith({ ...input, id: '1' });
+  });
+
+  it('should delete user via the downstream REST service', async () => {
+    const deletedUser = { id: '1', name: 'Deleted' };
+    (userService.deleteUser as jest.Mock).mockResolvedValue(deletedUser);
+
+    const result = await resolver.deleteUser('1');
+    expect(result).toEqual(deletedUser);
+    expect(userService.deleteUser).toHaveBeenCalledWith({ id: '1' });
   });
 });
 
 describe('ActivityResolver', () => {
   let resolver: ActivityResolver;
   let activityService: ActivityService;
-  let cacheManager: RedisCacheService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -94,41 +87,19 @@ describe('ActivityResolver', () => {
             getActivities: jest.fn(),
           },
         },
-        {
-          provide: RedisCacheService,
-          useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
     resolver = module.get<ActivityResolver>(ActivityResolver);
     activityService = module.get<ActivityService>(ActivityService);
-    cacheManager = module.get<RedisCacheService>(RedisCacheService);
   });
 
-  describe('activities', () => {
-    it('should return cached activities', async () => {
-      const cached = [{ action: 'login' }];
-      (cacheManager.get as jest.Mock).mockResolvedValue(cached);
+  it('should return activities from the downstream REST service', async () => {
+    const activities = [{ action: 'logout' }];
+    (activityService.getActivities as jest.Mock).mockResolvedValue(activities);
 
-      const result = await resolver.activities('1');
-      expect(result).toEqual(cached);
-      expect(activityService.getActivities).not.toHaveBeenCalled();
-    });
-
-    it('should fetch from service and cache', async () => {
-      const activities = [{ action: 'logout' }];
-      (cacheManager.get as jest.Mock).mockResolvedValue(null);
-      (activityService.getActivities as jest.Mock).mockResolvedValue(
-        activities,
-      );
-
-      const result = await resolver.activities('1');
-      expect(result).toEqual(activities);
-      expect(cacheManager.set).toHaveBeenCalledWith('activity1', activities);
-    });
+    const result = await resolver.activities('1');
+    expect(result).toEqual(activities);
+    expect(activityService.getActivities).toHaveBeenCalledWith({ id: '1' });
   });
 });

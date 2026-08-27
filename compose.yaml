@@ -13,6 +13,8 @@ services:
     image: dashboard-web-image
     ports:
       - "3000:3000" 
+    environment:
+      - VITE_API_TARGET=http://bff-gateway:4000
     networks:
       - app-network
     restart: unless-stopped  
