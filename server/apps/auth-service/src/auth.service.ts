@@ -7,8 +7,8 @@ export class AuthService {
   private readonly jsonServerUrls = Array.from(
     new Set([
       process.env.JSON_SERVER_URL,
-      'http://localhost:8000',
       'http://jsonServer-app:8000',
+      'http://localhost:8000',
     ].filter(Boolean) as string[]),
   );
 

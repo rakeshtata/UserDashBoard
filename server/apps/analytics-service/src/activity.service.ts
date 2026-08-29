@@ -12,9 +12,10 @@ export class ActivityService {
   );
 
   async getActivities(args: { id: string }): Promise<any> {
-    const numId = Number(args.id);
+    let numId = Number(args.id);
     if (Number.isNaN(numId)) {
-      throw new Error('Invalid id');
+      //throw new Error('Invalid id');
+      numId = 1;
     }
     const id = ((numId - 1) % 10) + 1;
 

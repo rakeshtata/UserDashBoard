@@ -2,11 +2,13 @@ services:
   jsonServer-app:
     build: jsonServer/
     image: dashboard-jsonserver-image
+    volumes:
+      - ./jsonServer/db.json:/app/db.json
     ports:
       - "8000:8000"
     networks:
       - app-network
-    restart: unless-stopped  
+    restart: unless-stopped
 
   web-app:
     build: web/

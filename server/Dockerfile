@@ -6,9 +6,16 @@ WORKDIR /app
 # Based on the user's run_shell_command history, they are using pnpm.
 RUN npm install -g pnpm
 
-# Copying all possible lock files to ensure pnpm has what it needs
+# Copy package and any lockfiles we might have so the installer can choose
 COPY package.json pnpm-lock.yaml* package-lock.json* ./
-RUN pnpm install
+
+# Prefer pnpm when a pnpm-lock.yaml exists, otherwise fall back to npm ci.
+# This makes builds more robust across environments that may not have pnpm lock.
+RUN if [ -f pnpm-lock.yaml ]; then \
+			pnpm install; \
+		else \
+			npm ci; \
+		fi
 
 COPY . .
 RUN pnpm run build
@@ -20,9 +27,13 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+# Production dependencies: prefer pnpm when lockfile present, otherwise use npm ci
 COPY package.json pnpm-lock.yaml* package-lock.json* ./
-# Removing --frozen-lockfile to allow pnpm to resolve any minor mismatches during the transition
-RUN pnpm install --prod
+RUN if [ -f pnpm-lock.yaml ]; then \
+			pnpm install --prod; \
+		else \
+			npm ci --only=production; \
+		fi
 
 # Copy the entire dist folder and the shared libs
 COPY --from=builder /app/dist ./dist

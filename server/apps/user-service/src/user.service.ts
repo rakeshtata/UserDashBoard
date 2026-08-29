@@ -13,8 +13,12 @@ export class UserService {
     }
 
     const plainUser = user.toObject ? user.toObject() : user;
+    const idVal = plainUser.id !== undefined && plainUser.id !== null
+      ? String(plainUser.id)
+      : undefined;
+
     return {
-      id: plainUser._id ? plainUser._id.toString() : plainUser.id?.toString(),
+      id: idVal,
       name: plainUser.name,
       age: plainUser.age,
       gender: plainUser.gender,
