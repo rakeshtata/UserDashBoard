@@ -412,57 +412,174 @@ Create Kubernetes resource definitions that mirror the Docker Compose architectu
 
 ## Folder & Deployment Structure
 
-### Suggested repository layout
+### Actual repository layout (current project state)
 
-```
-services/
-  auth-service/
-  user-service/
-  analytics-service/
-  dashboard-bff/
-shared/
-  events/
-  graphql/
-  dto/
-kubernetes/
-  manifests/
-  helm/
-  README.md    # Kubernetes deployment instructions
-compose.yaml
-README.md
+```text
+UserDashBoard/
+├── README.md
+├── compose.yaml
+├── nginx.conf
+├── mongo-init.js
+├── chrome-dev.sh
+├── context.md
+├── design-plan.md
+├── IMPROVEMENTS.md
+├── index.html
+├── skaffold.yaml
+├── skaffold/
+├── jsonServer/
+│   ├── db.json
+│   ├── Dockerfile
+│   ├── package.json
+│   └── pnpm-lock.yaml
+├── web/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── store/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── Dockerfile
+│   ├── jest.config.js
+│   └── jest.setup.js
+├── server/
+│   ├── apps/
+│   │   ├── auth-service/
+│   │   │   └── src/
+│   │   ├── bff-gateway/
+│   │   │   └── src/
+│   │   ├── user-service/
+│   │   │   └── src/
+│   │   └── analytics-service/
+│   │       └── src/
+│   ├── libs/
+│   │   └── shared/
+│   │       └── src/
+│   │           ├── schemas/
+│   │           ├── models/
+│   │           └── index.ts
+│   ├── test/
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── tsconfig.json
+│   ├── nest-cli.json
+│   └── Dockerfile
+├── kubernetes/
+│   ├── deploy.sh
+│   └── manifests/
+│       ├── backend-deployments.yaml
+│       ├── configmaps.yaml
+│       ├── frontend.yaml
+│       ├── ingress.yaml
+│       ├── jsonserver.yaml
+│       ├── mongodb.yaml
+│       ├── redis.yaml
+│       └── secrets.yaml
+├── legacy/
+│   └── koa-server/
+└── .gitignore
 ```
 
+### Intended target structure after cleanup
+
+```text
+UserDashBoard/
+├── README.md
+├── compose.yaml
+├── nginx.conf
+├── .env.example
+├── mongo-init.js
+├── web/
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── graphql/
+│   │   │   └── socket/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── store/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   └── package.json
+├── server/
+│   ├── apps/
+│   │   ├── auth-service/
+│   │   │   └── src/
+│   │   ├── bff-gateway/
+│   │   │   ├── src/
+│   │   │   │   ├── auth/
+│   │   │   │   ├── dto/
+│   │   │   │   ├── models/
+│   │   │   │   ├── mappers/
+│   │   │   │   ├── app.module.ts
+│   │   │   │   ├── app.resolver.ts
+│   │   │   │   ├── app.service.ts
+│   │   │   │   └── main.ts
+│   │   │   └── schemas/
+│   │   ├── user-service/
+│   │   │   └── src/
+│   │   └── analytics-service/
+│   │       └── src/
+│   ├── libs/
+│   │   └── shared/
+│   │       └── src/
+│   │           ├── dto/
+│   │           ├── schemas/
+│   │           ├── types/
+│   │           ├── mappers/
+│   │           └── index.ts
+│   └── package.json
+├── jsonServer/
+│   └── db.json
+├── kubernetes/
+│   ├── manifests/
+│   └── README.md
+├── legacy/
+│   └── koa-server/
+└── .gitignore
+```
 
 ### BFF service structure
 
-```
-services/dashboard-bff/
-  src/
-    app.module.ts
-    main.ts
-    graphql/
-      schema.graphql
-      resolvers/
-        dashboard.resolver.ts
-        user.resolver.ts
-    services/
-      auth.service.ts
-      user.service.ts
-      analytics.service.ts
-      cache.service.ts
-    clients/
-      auth.client.ts
-      user.client.ts
-      analytics.client.ts
-  package.json
-  Dockerfile
+```text
+server/apps/bff-gateway/src/
+├── auth/
+│   ├── auth.controller.ts
+│   ├── auth.module.ts
+│   └── auth.service.ts
+├── dto/
+│   ├── user-input.dto.ts
+│   ├── auth-login.dto.ts
+│   └── dashboard.dto.ts
+├── models/
+│   ├── user.model.ts
+│   ├── activity.model.ts
+│   └── auth.model.ts
+├── mappers/
+│   └── user.mapper.ts
+├── app.module.ts
+├── app.resolver.ts
+├── app.service.ts
+├── analytics.gateway.ts
+├── user-rest.adapter.ts
+├── main.ts
+└── schemas/
+    └── schema.gql
 ```
 
 **Notes:**
-- BFF focuses on GraphQL aggregation from `auth-service`, `user-service`, and `analytics-service`.
-- WebSocket connections are handled directly by `analytics-service` for real-time updates.
-- Mock events are generated internally in `analytics-service` using jsonServer data.
-- Redis is shared for caching across services.
+- The BFF owns the public GraphQL contract and frontend-specific DTOs.
+- Internal services remain storage/domain focused and do not directly expose public client contracts.
+- Shared code under `server/libs/shared` should contain reusable contracts and validation types, not duplicate runtime models.
+- Debug/raw-backend endpoints should be removed so the gateway stays cleanly client-facing.
+- `legacy/koa-server` and duplicate generated schema files should be archived or cleaned up to avoid confusion.
 
 ## Compatibility with Current Stack
 
